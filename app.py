@@ -385,7 +385,7 @@ else:
         
         # Display images and their details with improved layout
 # Display images and their details with improved layout
-    if filtered_image_details:
+   if filtered_image_details:
         st.write("### Weapon Images")
         cols_per_row = 3
         rows = [
@@ -408,45 +408,48 @@ else:
                         unsafe_allow_html=True,
                     )
 
-                    # Add details button in a fixed layout
-                    st.markdown(
-                        f"""
-                        <div style="text-align: center; margin-top: 5px;">
-                            <button style="
-                                display: inline-block;
-                                padding: 8px 16px;
-                                background-color: #4CAF50;
-                                color: white;
-                                border: none;
-                                border-radius: 5px;
-                                text-align: center;
-                                font-size: 14px;
-                                cursor: pointer;
-                                width: 100%;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                            ">
-                                Details: {file_name}
-                            </button>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
+                    # Add a details button
+                    if st.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
+                        with st.expander(f"Details of {file_name}", expanded=True):
+                            for key, value in details.items():
+                                st.write(f"**{key}:** {value}")
 
+                            # Create a PDF for the selected image and its details
+                            pdf = FPDF()
+                            pdf.set_auto_page_break(auto=True, margin=15)
+                            pdf.add_page()
+                            
+                            # Add the image to the PDF
+                            if os.path.exists(image_path):
+                                pdf.image(image_path, x=10, y=10, w=100)
 
-        # Create the PDF with filtered images and their details
-        pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
-        try:
-            create_pdf([(img[0], img[2]) for img in filtered_image_details], pdf_file)  # Pass only the required fields
-            with open(pdf_file, "rb") as f:
-                st.download_button(
-                    label="Download Filtered PDF",
-                    data=f,
-                    file_name="filtered_weapon_images_details.pdf",
-                    mime="application/pdf",
-                )
-        except Exception as e:
-            st.error(f"Error generating PDF: {e}")
+                            # Add the details to the PDF
+                            pdf.set_font("Arial", size=12)
+                            pdf.ln(110)  # Move below the image
+                            for key, value in details.items():
+                                safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
+                                pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
+
+                            # Save the PDF
+                            pdf_file_path = os.path.join(BASE_DIR, f"{file_name}_details.pdf")
+                            pdf.output(pdf_file_path)
+
+                            # Provide a download button for the PDF
+                            with open(pdf_file_path, "rb") as f:
+                                st.download_button(
+                                    label="Download PDF with Details",
+                                    data=f,
+                                    file_name=f"{file_name}_details.pdf",
+                                    mime="application/pdf",
+                                )
+
+                            # Provide a download button for the image itself
+                            with open(image_path, "rb") as img_file:
+                                st.download_button(
+                                    label="Download Image",
+                                    data=img_file,
+                                    file_name=file_name,
+                                    mime="image/jpeg",
+                                )
     else:
         st.warning("No images match the selected filters.")
