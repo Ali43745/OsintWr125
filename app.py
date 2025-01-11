@@ -439,9 +439,9 @@ else:
             cols = st.columns(len(row))
             for col, (image_path, file_name, details) in zip(cols, row):
                 with col:
-                    # Display image
+                    # Display image with consistent height
                     if os.path.exists(image_path):
-                        st.image(image_path, caption="", use_container_width=True)
+                        st.image(image_path, caption="", use_container_width=True, output_format="JPEG")
                     else:
                         st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
