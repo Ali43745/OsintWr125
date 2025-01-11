@@ -262,66 +262,43 @@ if st.session_state.current_page == "Home":
 
         
     
-# Dynamically Created Pages Based on .toml
 else:
     import os
     import pandas as pd
-    from sqlalchemy import create_engine
-    from fpdf import FPDF
     import streamlit as st
 
     # Dynamically get the current page
     current_page = st.session_state.current_page
 
-    # Define the list of categories for matching
-    main_categories = [    ]
-
-    # Extract the category from the current page's normalized name
-    def extract_main_category(name):
-        """Extract the main category based on the naming convention."""
-        for category in main_categories:
-            if category.lower() in name.lower():
-                return category
-        return "Unknown"
-
-    category_name = extract_main_category(current_page)
-
     # Display the Page Title
     st.title(f"{current_page}")
 
     # Display the Category Heading
-    st.header(f"Category: {category_name}")
+    st.header(f"Category: {current_page}")
 
     # Add description or further dynamic content
-    st.write(f"This is the dynamically created page for **{current_page}** under the category **{category_name}**.")
+    st.write(f"This is the dynamically created page for **{current_page}**.")
 
-    # Normalize the category name
-    def normalize_name(name):
-        """Normalize category names by removing prefixes and handling spaces or special characters."""
-        unwanted_prefixes = [ ]
+    # Base image directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    IMAGE_FOLDER = os.path.join(BASE_DIR, "normalized_images")
 
-        for prefix in unwanted_prefixes:
-            if name.lower().startswith(prefix.lower()):
-                name = name[len(prefix):].strip("_")
-
-        normalized_name = name.lower().replace("+", " ").replace("_", " ").replace("-", " ").strip()
-        return normalized_name
-
-    # Function to find image files matching the category
+    # Function to find images directly based on the folder matching the category
     def find_images_for_category(base_folder, category_name):
-        """Find all images in a folder matching the normalized category name."""
-        normalized_category = normalize_name(category_name)
-        images = []
-        for root, _, files in os.walk(base_folder):
-            if normalized_category in normalize_name(root):
-                for file in files:
-                    if file.lower().endswith((".png", ".jpg", ".jpeg")):
-                        images.append((os.path.join(root, file), file))  # Return full path and file name
-        return images
+        """Find all images in the folder directly matching the category name."""
+        category_folder = os.path.join(base_folder, category_name)
+        if os.path.exists(category_folder) and os.path.isdir(category_folder):
+            images = [
+                (os.path.join(category_folder, file), file)
+                for file in os.listdir(category_folder)
+                if file.lower().endswith((".png", ".jpg", ".jpeg"))
+            ]
+            return images
+        return []
 
     # Function to load details for the images from the database
     def load_image_details(file_name):
-        file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for 
+        file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for SQL
         try:
             query = f"""
             SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
@@ -332,13 +309,10 @@ else:
             result = pd.read_sql(query, engine)
             if not result.empty:
                 details = result.iloc[0].dropna().to_dict()  # Drop any columns with NaN values
-                return {key: value for key, value in details.items() if value != "Unknown"}
+                return details
         except Exception as e:
             print(f"Error loading details for {file_name}: {e}")
-            engine.rollback()
         return {}
-
-
     
     # Function to create a PDF with image details
     def create_pdf(images_with_details, output_file):
