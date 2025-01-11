@@ -3,7 +3,7 @@ name = "Aircraft"
 icon = "✈️"
 
 [[pages]]
-name = "Aircrat_Carriers"
+name = "Aircraft_Carriers"
 icon = "🚁"
 
 [[pages]]
