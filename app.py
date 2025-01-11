@@ -45,10 +45,6 @@ def load_data():
     query = """
     SELECT Weapon_Name, Weapon_Category, Type, Calliber, Length, Barrel_Length, Weight, Width, Height, Development, Manufacturere, Action, Range, Beam, Draught, Displacement, Compliment, Speed, Downloded_Image_Name, Downloaded_Imge_Path 
     FROM dbo_final_text1
-    WHERE Weapon_Name IN (
-        SELECT DISTINCT Weapon_Name
-        FROM dbo_final_text1
-    );
     """
     return pd.read_sql(query, engine)
 
