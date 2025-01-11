@@ -381,11 +381,13 @@ else:
 
             # Stop infinite loop
             break
+
+        
         # Display images and their details
-        if filtered_images:
+        if filtered_image_details:
             st.write("### Weapon Images")
             cols_per_row = 4
-            rows = [filtered_images[i : i + cols_per_row] for i in range(0, len(filtered_images), cols_per_row)]
+            rows = [filtered_image_details[i : i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)]
 
             for row in rows:
                 cols = st.columns(len(row))
@@ -403,7 +405,7 @@ else:
             # Create the PDF with filtered images and their details
             pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
             try:
-                create_pdf([(img[0], img[2]) for img in filtered_images], pdf_file)  # Pass only the required fields
+                create_pdf([(img[0], img[2]) for img in filtered_image_details], pdf_file)  # Pass only the required fields
                 with open(pdf_file, "rb") as f:
                     st.download_button(
                         label="Download Filtered PDF",
