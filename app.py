@@ -316,6 +316,27 @@ else:
             print(f"Error loading details for {file_name}: {e}")
         return {}
 
+    # Function to create a PDF with image details
+    def create_pdf(images_with_details, output_file):
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+
+        for image_path, details in images_with_details:
+            pdf.add_page()
+
+            # Add the image
+            if os.path.exists(image_path):
+                pdf.image(image_path, x=10, y=10, w=100)
+
+            # Add the details
+            pdf.set_font("Arial", size=12)
+            pdf.ln(110)  # Move below the image
+            for key, value in details.items():
+                safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
+                pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
+
+        pdf.output(output_file)
+
     # Get images for the current category
     images = find_images_for_category(IMAGE_FOLDER, current_page)
 
@@ -351,6 +372,7 @@ else:
             ):
                 filtered_images.append((image_path, file_name, details))
 
+
         # Display images and their details
         if filtered_images:
             st.write("### Weapon Images")
@@ -370,16 +392,19 @@ else:
                             for key, value in details.items():
                                 col.write(f"**{key}:** {value}")
 
-            # Allow the user to download the filtered results as a PDF
+            # Create the PDF with filtered images and their details
             pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
-            create_pdf([(img[0], img[2]) for img in filtered_images], pdf_file)
-            with open(pdf_file, "rb") as f:
-                st.download_button(
-                    label="Download Filtered PDF",
-                    data=f,
-                    file_name="filtered_weapon_images_details.pdf",
-                    mime="application/pdf",
-                )
+            try:
+                create_pdf([(img[0], img[2]) for img in filtered_images], pdf_file)  # Pass only the required fields
+                with open(pdf_file, "rb") as f:
+                    st.download_button(
+                        label="Download Filtered PDF",
+                        data=f,
+                        file_name="filtered_weapon_images_details.pdf",
+                        mime="application/pdf",
+                    )
+            except Exception as e:
+                st.error(f"Error generating PDF: {e}")
         else:
             st.warning("No images match the selected filters.")
     else:
