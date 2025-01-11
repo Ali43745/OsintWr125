@@ -266,81 +266,50 @@ if st.session_state.current_page == "Home":
 else:
     import os
     import pandas as pd
-    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
     from fpdf import FPDF
     import streamlit as st
 
-    # Dynamically get the current page
-    current_page = st.session_state.current_page
+    # Create a session for database interactions
+    Session = sessionmaker(bind=engine)
 
-    # Define the list of categories for matching
-    main_categories = [
-        "Vehicles", "Infantry_Weapons", "Firearms", "Aviation Subsystems",
-        "Artillery", "Ammunitions", "Aircraft"
-    ]
-
-    # Extract the category from the current page's normalized name
-    def extract_main_category(name):
-        """Extract the main category based on the naming convention."""
-        for category in main_categories:
-            if category.lower() in name.lower():
-                return category
-        return "Unknown"
-
-    category_name = extract_main_category(current_page)
-
-    # Display the Page Title
-    st.title(f"{current_page}")
-
-    # Display the Category Heading
-    st.header(f"Category: {category_name}")
-
-    # Add description or further dynamic content
-    st.write(f"This is the dynamically created page for **{current_page}** under the category **{category_name}**.")
-
-    # Normalize the category name
+    # Function to normalize category names
     def normalize_name(name):
         """Normalize category names by removing prefixes and handling spaces or special characters."""
         unwanted_prefixes = ["Vehicles", "Infantry_Weapons", "Firearms", "Aviation Subsystems",
                              "Artillery", "Ammunitions", "Aircraft"]
-
         for prefix in unwanted_prefixes:
             if name.lower().startswith(prefix.lower()):
                 name = name[len(prefix):].strip("_")
+        return name.lower().replace("+", " ").replace("_", " ").replace("-", " ").strip()
 
-        normalized_name = name.lower().replace("+", " ").replace("_", " ").replace("-", " ").strip()
-        return normalized_name
-
-    # Function to find image files matching the category
-    def find_images_for_category(base_folder, category_name):
-        """Find all images in a folder matching the normalized category name."""
-        normalized_category = normalize_name(category_name)
-        images = []
-        for root, _, files in os.walk(base_folder):
-            if normalized_category in normalize_name(root):
-                for file in files:
-                    if file.lower().endswith((".png", ".jpg", ".jpeg")):
-                        images.append((os.path.join(root, file), file))  # Return full path and file name
-        return images
-
-    # Function to load details for the images from the database
+    # Function to load image details
     def load_image_details(file_name):
+        """
+        Load additional details for a given image from the database table.
+        """
+        session = Session()  # Initialize a session
         file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for SQL
-        """Load additional details for a given image from the database table."""
-        query = f"""
-           SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
-               Weapon_Category AS 'Weapon Category', Type, Caliber
-           FROM dbo_final_text1
-           WHERE Downloaded_Image_Name = '{file_name_escaped}'
-           """
-        try:
-           result = engine.execute(query)
-           return result.fetchall()
-        except Exception as e:
-           print(f"Error executing query: {e}")
-           raise
 
-    
+        # Query definition
+        query = """
+            SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
+                   Weapon_Category AS 'Weapon Category', Type, Caliber
+            FROM dbo_final_text1
+            WHERE Downloaded_Image_Name = :file_name
+        """
+        try:
+            # Execute the query with parameterized input
+            result = session.execute(query, {"file_name": file_name})
+            details = result.fetchall()  # Fetch results
+            return details
+        except Exception as e:
+            session.rollback()  # Rollback in case of an error
+            print(f"Error executing query: {e}")
+            raise
+        finally:
+            session.close()  # Close the session
+
     # Function to create a PDF with image details
     def create_pdf(images_with_details, output_file):
         pdf = FPDF()
@@ -362,60 +331,34 @@ else:
 
         pdf.output(output_file)
 
+    # Dynamically get the current page
+    current_page = st.session_state.current_page
+
     # Base image directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     IMAGE_FOLDER = os.path.join(BASE_DIR, "normalized_images")
     placeholder_image_path = os.path.join(IMAGE_FOLDER, "placeholder.jpeg")
-    print(f"IMAGE_FOLDER: {IMAGE_FOLDER}")
-    print(f"Files in IMAGE_FOLDER: {os.listdir(IMAGE_FOLDER)}")
 
-    for root, dirs, files in os.walk(IMAGE_FOLDER):
-        print(f"Root: {root}, Dirs: {dirs}, Files: {files}")
+    # Find images for the current category
+    def find_images_for_category(base_folder, category_name):
+        """Find all images in a folder matching the normalized category name."""
+        normalized_category = normalize_name(category_name)
+        images = []
+        for root, _, files in os.walk(base_folder):
+            if normalized_category in normalize_name(root):
+                for file in files:
+                    if file.lower().endswith((".png", ".jpg", ".jpeg")):
+                        images.append((os.path.join(root, file), file))  # Return full path and file name
+        return images
 
-    # Normalize category name
-    normalized_category_name = normalize_name(current_page)
-
-    # Find images for the category
+    # Find images
     images = find_images_for_category(IMAGE_FOLDER, current_page)
 
-    # Ensure valid data exists for the current category
-    data["Normalized_Weapon_Category"] = data["Weapon_Category"].apply(normalize_name)  # Normalize weapon categories
-    normalized_current_page = normalize_name(current_page)
-
-    category_filter = data[
-        data["Normalized_Weapon_Category"] == normalized_current_page
-    ]
-
-    if not category_filter.empty:
-        available_years = ["All"] + sorted(category_filter["Development"].dropna().unique())
-        available_origins = ["All"] + sorted(category_filter["Origin"].dropna().unique())
-
-        st.write("### Filter Options")
-        col1, col2 = st.columns(2)
-        with col1:
-            selected_year = st.selectbox("Filter by Year", options=available_years)
-        with col2:
-            if selected_year != "All":
-                filtered_by_year = category_filter[category_filter["Development"] == selected_year]
-                available_origins = ["All"] + sorted(filtered_by_year["Origin"].dropna().unique())
-            selected_origin = st.selectbox("Filter by Origin", options=available_origins)
-
-        if selected_origin != "All":
-            filtered_by_origin = category_filter[category_filter["Origin"] == selected_origin]
-            available_years = ["All"] + sorted(filtered_by_origin["Development"].dropna().unique())
-            selected_year = st.selectbox("Filter by Year", options=available_years, index=available_years.index(selected_year) if selected_year in available_years else 0)
-    else:
-        available_years = ["All"]
-        available_origins = ["All"]
-        selected_year = st.selectbox("Filter by Year", options=available_years)
-        selected_origin = st.selectbox("Filter by Origin", options=available_origins)
-
-    # Apply filters to the images
+    # Apply filters to images
     filtered_images = []
     for image_path, file_name in images:
-        details = load_image_details(file_name)
-        if details and (selected_year == "All" or details.get("Development Era") == selected_year) and \
-           (selected_origin == "All" or details.get("Origin") == selected_origin):
+        details = load_image_details(file_name)  # Load image details
+        if details:
             filtered_images.append((image_path, file_name, details))
 
     # Display images and their details
@@ -447,4 +390,4 @@ else:
                 mime="application/pdf",
             )
     else:
-        st.warning("No images found for the selected filters.")
+        st.warning("No images found for the selected category.")
