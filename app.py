@@ -274,10 +274,7 @@ else:
     current_page = st.session_state.current_page
 
     # Define the list of categories for matching
-    main_categories = [
-        "Vehicles", "Infantry_Weapons", "Firearms", "Aviation Subsystems",
-        "Artillery", "Ammunitions", "Aircraft"
-    ]
+    main_categories = [    ]
 
     # Extract the category from the current page's normalized name
     def extract_main_category(name):
@@ -301,8 +298,7 @@ else:
     # Normalize the category name
     def normalize_name(name):
         """Normalize category names by removing prefixes and handling spaces or special characters."""
-        unwanted_prefixes = ["Vehicles", "Infantry_Weapons", "Firearms", "Aviation Subsystems",
-                             "Artillery", "Ammunitions", "Aircraft"]
+        unwanted_prefixes = [ ]
 
         for prefix in unwanted_prefixes:
             if name.lower().startswith(prefix.lower()):
