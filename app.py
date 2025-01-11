@@ -349,30 +349,38 @@ else:
 
     # Filter options for the current page based on loaded image details
     if image_details:
-        # Extract available years and origins from image details
-        available_years = ["All"] + sorted(
-            {details.get("Development Era") for _, _, details in image_details if "Development Era" in details}
-        )
-        available_origins = ["All"] + sorted(
-            {details.get("Origin") for _, _, details in image_details if "Origin" in details}
-        )
+        # Initialize dynamic filters
+        filtered_image_details = image_details
 
-        st.write("### Filter Options")
-        col1, col2 = st.columns(2)
-        with col1:
-            selected_year = st.selectbox("Filter by Year", options=available_years)
-        with col2:
-            selected_origin = st.selectbox("Filter by Origin", options=available_origins)
+        # Extract available years and origins dynamically
+        def get_filter_options(filtered_details, field):
+            return ["All"] + sorted(
+                {details.get(field) for _, _, details in filtered_details if field in details and details.get(field)}
+            )
 
-        # Apply filters to the images
-        filtered_images = []
-        for image_path, file_name, details in image_details:
-            if (selected_year == "All" or details.get("Development Era") == selected_year) and (
-                selected_origin == "All" or details.get("Origin") == selected_origin
-            ):
-                filtered_images.append((image_path, file_name, details))
+        selected_year = "All"
+        selected_origin = "All"
 
+        while True:
+            available_years = get_filter_options(filtered_image_details, "Development Era")
+            available_origins = get_filter_options(filtered_image_details, "Origin")
 
+            col1, col2 = st.columns(2)
+            with col1:
+                selected_year = st.selectbox("Filter by Year", options=available_years, key="year_filter")
+            with col2:
+                selected_origin = st.selectbox("Filter by Origin", options=available_origins, key="origin_filter")
+
+            # Apply filters
+            filtered_image_details = [
+                (image_path, file_name, details)
+                for image_path, file_name, details in image_details
+                if (selected_year == "All" or details.get("Development Era") == selected_year)
+                and (selected_origin == "All" or details.get("Origin") == selected_origin)
+            ]
+
+            # Stop infinite loop
+            break
         # Display images and their details
         if filtered_images:
             st.write("### Weapon Images")
