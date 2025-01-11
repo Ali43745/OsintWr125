@@ -326,7 +326,6 @@ else:
     # Function to load details for the images from the database
     def load_image_details(file_name):
         file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for 
-        """Load additional details for a given image from the database table."""
         try:
             query = f"""
             SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
