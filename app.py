@@ -15,12 +15,21 @@ import re
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import tracemalloc
+from sqlalchemy.orm import sessionmaker
 
-tracemalloc.start()
+Session = sessionmaker(bind=engine)
+session = Session()
 
-st.write(f"Memory usage: {tracemalloc.get_traced_memory()[0] / 1024 / 1024:.2f} MB")
-tracemalloc.stop()
+try:
+    details = session.execute(query).fetchall()
+    session.commit()
+except Exception as e:
+    session.rollback()  # Correct usage of rollback
+    print(f"Error: {e}")
+    raise
+finally:
+    session.close()
+
 
 
 # Database connection details
@@ -330,23 +339,22 @@ else:
 
     # Function to load details for the images from the database
     def load_image_details(file_name):
+        file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for SQL
         """Load additional details for a given image from the database table."""
+        query = f"""
+           SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
+               Weapon_Category AS 'Weapon Category', Type, Caliber
+           FROM dbo_final_text1
+           WHERE Downloaded_Image_Name = '{file_name_escaped}'
+           """
         try:
-            query = f"""
-            SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin, 
-                   Weapon_Category AS 'Weapon Category', Type, Caliber
-            FROM dbo_final_text1
-            WHERE Downloaded_Image_Name = '{file_name}'
-            """
-            result = pd.read_sql(query, engine)
-            if not result.empty:
-                details = result.iloc[0].dropna().to_dict()  # Drop any columns with NaN values
-                return {key: value for key, value in details.items() if value != "Unknown"}
+           result = engine.execute(query)
+           return result.fetchall()
         except Exception as e:
-            print(f"Error loading details for {file_name}: {e}")
-            engine.rollback()
-        return {}
+           print(f"Error executing query: {e}")
+           raise
 
+    
     # Function to create a PDF with image details
     def create_pdf(images_with_details, output_file):
         pdf = FPDF()
