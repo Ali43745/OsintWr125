@@ -333,12 +333,15 @@ else:
            FROM dbo_final_text1
            WHERE Downloaded_Image_Name = '{file_name_escaped}'
            """
-        try:
-           result = engine.execute(query)
-           return result.fetchall()
+       result = pd.read_sql(query, engine)
+            if not result.empty:
+                details = result.iloc[0].dropna().to_dict()  # Drop any columns with NaN values
+                return {key: value for key, value in details.items() if value != "Unknown"}
         except Exception as e:
-           print(f"Error executing query: {e}")
-           raise
+            print(f"Error loading details for {file_name}: {e}")
+            engine.rollback()
+        return {}
+
 
     
     # Function to create a PDF with image details
