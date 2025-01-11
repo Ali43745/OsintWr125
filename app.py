@@ -420,20 +420,18 @@ else:
                         unsafe_allow_html=True,
                     )
 
-    # Create the PDF with filtered images and their details
-      pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
-      try:
-        create_pdf([(img[0], img[2]) for img in filtered_image_details], pdf_file)  # Pass only the required fields
-        with open(pdf_file, "rb") as f:
-                    st.download_button(
-                        label="Download Filtered PDF",
-                        data=f,
-                        file_name="filtered_weapon_images_details.pdf",
-                        mime="application/pdf",
-                    )
-      except Exception as e:
-                st.error(f"Error generating PDF: {e}")
-      else:
-        st.warning("No images match the selected filters.")
+        # Create the PDF with filtered images and their details
+        pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
+        try:
+            create_pdf([(img[0], img[2]) for img in filtered_image_details], pdf_file)  # Pass only the required fields
+            with open(pdf_file, "rb") as f:
+                st.download_button(
+                    label="Download Filtered PDF",
+                    data=f,
+                    file_name="filtered_weapon_images_details.pdf",
+                    mime="application/pdf",
+                )
+        except Exception as e:
+            st.error(f"Error generating PDF: {e}")
     else:
-        st.warning(f"No images found for the category: {current_page}")
+        st.warning("No images match the selected filters.")
