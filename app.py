@@ -325,22 +325,23 @@ else:
 
     # Function to load details for the images from the database
     def load_image_details(file_name):
-        file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for SQL
-        """Load additional details for a given image from the database table."""
-        query = f"""
-           SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
+        file_name_escaped = file_name.replace("'", "''")  # Escape single quotes for S
+       """Load additional details for a given image from the database table."""
+        try:
+            query = f"""
+            SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
                Weapon_Category AS 'Weapon Category', Type, Caliber
-           FROM dbo_final_text1
-           WHERE Downloaded_Image_Name = '{file_name_escaped}'
-           """
-        result = pd.read_sql(query, engine)
-        if not result.empty:
+            FROM dbo_final_text1
+            WHERE Downloaded_Image_Name = '{file_name_escaped}'
+            """
+            result = pd.read_sql(query, engine)
+            if not result.empty:
                 details = result.iloc[0].dropna().to_dict()  # Drop any columns with NaN values
                 return {key: value for key, value in details.items() if value != "Unknown"}
-    except Exception as e:
+        except Exception as e:
             print(f"Error loading details for {file_name}: {e}")
             engine.rollback()
-    return {}
+        return {}
 
 
     
