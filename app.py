@@ -333,7 +333,7 @@ else:
            FROM dbo_final_text1
            WHERE Downloaded_Image_Name = '{file_name_escaped}'
            """
-       result = pd.read_sql(query, engine)
+            result = pd.read_sql(query, engine)
             if not result.empty:
                 details = result.iloc[0].dropna().to_dict()  # Drop any columns with NaN values
                 return {key: value for key, value in details.items() if value != "Unknown"}
