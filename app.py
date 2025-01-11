@@ -41,7 +41,7 @@ engine = get_engine()
 # Load data from weapon_data1 and join with dbo_images
 # Load data from weapon_data1
 @st.cache_data
-def load_data(load_data(offset=0, limit=1000):
+def load_data(offset=0, limit=1000):
     query = """
     SELECT Weapon_Name, Weapon_Category, Type, Calliber, Length, Barrel_Length, Weight, Width, Height, Development, Manufacturere, Action, Range, Beam, Draught, Displacement, Compliment, Speed, tfidf_features, bert_embeddings, Downloded_Image_Name, Downloaded_Imge_Path 
     FROM dbo_final_text1
