@@ -402,23 +402,38 @@ else:
                     else:
                         st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
-                    # Display the file name in one line
+                    # Display the file name in one line below the image
                     st.markdown(
                         f"<div style='text-align: center; font-size: 14px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
                         unsafe_allow_html=True,
                     )
 
-                    # Add details button with fixed width
+                    # Add details button in a fixed layout
                     st.markdown(
                         f"""
-                        <div style="display: flex; justify-content: center;">
-                            <button style="width: 100%; padding: 8px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; text-align: center;">
+                        <div style="text-align: center; margin-top: 5px;">
+                            <button style="
+                                display: inline-block;
+                                padding: 8px 16px;
+                                background-color: #4CAF50;
+                                color: white;
+                                border: none;
+                                border-radius: 5px;
+                                text-align: center;
+                                font-size: 14px;
+                                cursor: pointer;
+                                width: 100%;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            ">
                                 Details: {file_name}
                             </button>
                         </div>
                         """,
                         unsafe_allow_html=True,
                     )
+
 
         # Create the PDF with filtered images and their details
         pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
