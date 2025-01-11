@@ -349,7 +349,7 @@ else:
 
     
      # Filter options for the current page
-    category_filter = data[data["Weapon_Category"] == current_page]
+    category_filter = data[data["Type"] == current_page]
 
     if not category_filter.empty:
         available_years = ["All"] + sorted(category_filter["Development"].dropna().unique())
