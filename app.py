@@ -266,6 +266,7 @@ else:
     import os
     import pandas as pd
     import streamlit as st
+    from fpdf import FPDF
 
     # Dynamically get the current page
     current_page = st.session_state.current_page
@@ -282,6 +283,7 @@ else:
     # Base image directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     IMAGE_FOLDER = os.path.join(BASE_DIR, "normalized_images")
+    placeholder_image_path = os.path.join(IMAGE_FOLDER, "placeholder.jpeg")
 
     # Function to find images directly based on the folder matching the category
     def find_images_for_category(base_folder, category_name):
@@ -313,7 +315,7 @@ else:
         except Exception as e:
             print(f"Error loading details for {file_name}: {e}")
         return {}
-    
+
     # Function to create a PDF with image details
     def create_pdf(images_with_details, output_file):
         pdf = FPDF()
@@ -335,61 +337,21 @@ else:
 
         pdf.output(output_file)
 
-    # Base image directory
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    IMAGE_FOLDER = os.path.join(BASE_DIR, "normalized_images")
-    placeholder_image_path = os.path.join(IMAGE_FOLDER, "placeholder.jpeg")
+    # Print debug information for the image folder and its contents
     print(f"IMAGE_FOLDER: {IMAGE_FOLDER}")
     print(f"Files in IMAGE_FOLDER: {os.listdir(IMAGE_FOLDER)}")
 
     for root, dirs, files in os.walk(IMAGE_FOLDER):
         print(f"Root: {root}, Dirs: {dirs}, Files: {files}")
 
-    # Normalize category name
-    normalized_category_name = normalize_name(current_page)
-
     # Find images for the category
     images = find_images_for_category(IMAGE_FOLDER, current_page)
-
-    # Ensure valid data exists for the current category
-    data["Normalized_Weapon_Category"] = data["Weapon_Category"].apply(normalize_name)  # Normalize weapon categories
-    normalized_current_page = normalize_name(current_page)
-
-    category_filter = data[
-        data["Normalized_Weapon_Category"] == normalized_current_page
-    ]
-
-    if not category_filter.empty:
-        available_years = ["All"] + sorted(category_filter["Development"].dropna().unique())
-        available_origins = ["All"] + sorted(category_filter["Origin"].dropna().unique())
-
-        st.write("### Filter Options")
-        col1, col2 = st.columns(2)
-        with col1:
-            selected_year = st.selectbox("Filter by Year", options=available_years)
-        with col2:
-            if selected_year != "All":
-                filtered_by_year = category_filter[category_filter["Development"] == selected_year]
-                available_origins = ["All"] + sorted(filtered_by_year["Origin"].dropna().unique())
-            selected_origin = st.selectbox("Filter by Origin", options=available_origins)
-
-        if selected_origin != "All":
-            filtered_by_origin = category_filter[category_filter["Origin"] == selected_origin]
-            available_years = ["All"] + sorted(filtered_by_origin["Development"].dropna().unique())
-            selected_year = st.selectbox("Filter by Year", options=available_years, index=available_years.index(selected_year) if selected_year in available_years else 0)
-    else:
-        available_years = ["All"]
-        available_origins = ["All"]
-        selected_year = st.selectbox("Filter by Year", options=available_years)
-        selected_origin = st.selectbox("Filter by Origin", options=available_origins)
 
     # Apply filters to the images
     filtered_images = []
     for image_path, file_name in images:
         details = load_image_details(file_name)
-        if details and (selected_year == "All" or details.get("Development Era") == selected_year) and \
-           (selected_origin == "All" or details.get("Origin") == selected_origin):
-            filtered_images.append((image_path, file_name, details))
+        filtered_images.append((image_path, file_name, details))
 
     # Display images and their details
     if filtered_images:
@@ -406,9 +368,9 @@ else:
                     col.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
                 if col.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
-                    with st.expander(f"Details of {file_name}", expanded=True):
+                    with col.expander(f"Details of {file_name}", expanded=True):
                         for key, value in details.items():
-                            st.write(f"**{key}:** {value}")
+                            col.write(f"**{key}:** {value}")
 
         pdf_file = os.path.join(BASE_DIR, "weapon_images_details.pdf")
         create_pdf([(img[0], img[2]) for img in filtered_images], pdf_file)
@@ -420,9 +382,4 @@ else:
                 mime="application/pdf",
             )
     else:
-        st.warning("No images found for the selected filters.")
-
-
-
-
-
+        st.warning(f"No images found for the category: {current_page}")
