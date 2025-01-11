@@ -347,6 +347,35 @@ else:
     # Find images for the category
     images = find_images_for_category(IMAGE_FOLDER, current_page)
 
+    
+     # Filter options for the current page
+    category_filter = data[data["Weapon_Category"] == current_page]
+
+    if not category_filter.empty:
+        available_years = ["All"] + sorted(category_filter["Development"].dropna().unique())
+        available_origins = ["All"] + sorted(category_filter["Origin"].dropna().unique())
+
+        st.write("### Filter Options")
+        col1, col2 = st.columns(2)
+        with col1:
+            selected_year = st.selectbox("Filter by Year", options=available_years)
+        with col2:
+            if selected_year != "All":
+                filtered_by_year = category_filter[category_filter["Development"] == selected_year]
+                available_origins = ["All"] + sorted(filtered_by_year["Origin"].dropna().unique())
+            selected_origin = st.selectbox("Filter by Origin", options=available_origins)
+
+        if selected_origin != "All":
+            filtered_by_origin = category_filter[category_filter["Origin"] == selected_origin]
+            available_years = ["All"] + sorted(filtered_by_origin["Development"].dropna().unique())
+            selected_year = st.selectbox("Filter by Year", options=available_years, index=available_years.index(selected_year) if selected_year in available_years else 0)
+    else:
+        available_years = ["All"]
+        available_origins = ["All"]
+        selected_year = st.selectbox("Filter by Year", options=available_years)
+        selected_origin = st.selectbox("Filter by Origin", options=available_origins)
+
+
     # Apply filters to the images
     filtered_images = []
     for image_path, file_name in images:
