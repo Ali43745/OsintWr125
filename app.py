@@ -384,14 +384,57 @@ else:
 
         
         # Display images and their details with improved layout
-# Display images and their details with improved layout
-   if filtered_image_details:
+
+    # Display images and their details with improved layout
+    if filtered_image_details:
         st.write("### Weapon Images")
         cols_per_row = 3
         rows = [
-            filtered_image_details[i : i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)
+            filtered_image_details[i: i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)
         ]
 
+        # Combined Download: Create a ZIP file for all filtered images and their PDFs
+        import zipfile
+        from io import BytesIO
+
+        combined_zip_buffer = BytesIO()
+        with zipfile.ZipFile(combined_zip_buffer, "w") as zip_file:
+            for image_path, file_name, details in filtered_image_details:
+                if os.path.exists(image_path):
+                    zip_file.write(image_path, arcname=file_name)
+
+                # Generate a PDF for the current image and its details
+                pdf = FPDF()
+                pdf.set_auto_page_break(auto=True, margin=15)
+                pdf.add_page()
+
+                # Add image to the PDF
+                if os.path.exists(image_path):
+                    pdf.image(image_path, x=10, y=10, w=100)
+
+                # Add details to the PDF
+                pdf.set_font("Arial", size=12)
+                pdf.ln(110)  # Move below the image
+                for key, value in details.items():
+                    safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
+                    pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
+
+                # Save the PDF to the ZIP
+                pdf_file_path = f"{file_name}_details.pdf"
+                pdf.output(pdf_file_path)
+                zip_file.write(pdf_file_path, arcname=pdf_file_path)
+
+        combined_zip_buffer.seek(0)
+
+        # Add a download button for all filtered images and PDFs
+        st.download_button(
+            label="Download All Filtered Images and Details",
+            data=combined_zip_buffer,
+            file_name="filtered_images_and_details.zip",
+            mime="application/zip",
+        )
+
+        # Display each image in a grid layout
         for row in rows:
             cols = st.columns(len(row))
             for col, (image_path, file_name, details) in zip(cols, row):
@@ -410,15 +453,17 @@ else:
 
                     # Add a details button
                     if st.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
+                        st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
                         with st.expander(f"Details of {file_name}", expanded=True):
                             for key, value in details.items():
                                 st.write(f"**{key}:** {value}")
 
+                            # Individual Downloads
                             # Create a PDF for the selected image and its details
                             pdf = FPDF()
                             pdf.set_auto_page_break(auto=True, margin=15)
                             pdf.add_page()
-                            
+
                             # Add the image to the PDF
                             if os.path.exists(image_path):
                                 pdf.image(image_path, x=10, y=10, w=100)
