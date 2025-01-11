@@ -41,7 +41,7 @@ engine = get_engine()
 # Load data from weapon_data1 and join with dbo_images
 # Load data from weapon_data1
 @st.cache_data
-def load_data(offset=0, limit=1000):
+def load_data():
     query = """
     SELECT Weapon_Name, Weapon_Category, Type, Calliber, Length, Barrel_Length, Weight, Width, Height, Development, Manufacturere, Action, Range, Beam, Draught, Displacement, Compliment, Speed, Downloded_Image_Name, Downloaded_Imge_Path 
     FROM dbo_final_text1
@@ -53,7 +53,7 @@ def load_data(offset=0, limit=1000):
     return pd.read_sql(query, engine)
 
 page = st.number_input("Page", min_value=1, max_value=10, step=1)
-data = load_data(offset=(page - 1) * 1000, limit=1000)
+data = load_data()
 
 # Resolve the directory path
 current_dir = Path(__file__).resolve().parent  # Use resolve() to get the absolute path
