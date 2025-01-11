@@ -15,6 +15,13 @@ import re
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import tracemalloc
+
+tracemalloc.start()
+
+st.write(f"Memory usage: {tracemalloc.get_traced_memory()[0] / 1024 / 1024:.2f} MB")
+tracemalloc.stop()
+
 
 # Database connection details
 DB_HOST = "junction.proxy.rlwy.net"
@@ -34,7 +41,7 @@ engine = get_engine()
 # Load data from weapon_data1 and join with dbo_images
 # Load data from weapon_data1
 @st.cache_data
-def load_data():
+def load_data(load_data(offset=0, limit=1000):
     query = """
     SELECT Weapon_Name, Weapon_Category, Type, Calliber, Length, Barrel_Length, Weight, Width, Height, Development, Manufacturere, Action, Range, Beam, Draught, Displacement, Compliment, Speed, tfidf_features, bert_embeddings, Downloded_Image_Name, Downloaded_Imge_Path 
     FROM dbo_final_text1
@@ -45,7 +52,8 @@ def load_data():
     """
     return pd.read_sql(query, engine)
 
-data = load_data()
+page = st.number_input("Page", min_value=1, max_value=10, step=1)
+data = load_data(offset=(page - 1) * 1000, limit=1000)
 
 # Resolve the directory path
 current_dir = Path(__file__).resolve().parent  # Use resolve() to get the absolute path
