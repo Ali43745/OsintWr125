@@ -383,24 +383,42 @@ else:
             break
 
         
-        # Display images and their details
-        if filtered_image_details:
-            st.write("### Weapon Images")
-            cols_per_row = 4
-            rows = [filtered_image_details[i : i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)]
+        # Display images and their details with improved layout
+# Display images and their details with improved layout
+    if filtered_image_details:
+        st.write("### Weapon Images")
+        cols_per_row = 4
+        rows = [
+            filtered_image_details[i : i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)
+        ]
 
-            for row in rows:
-                cols = st.columns(len(row))
-                for col, (image_path, file_name, details) in zip(cols, row):
+        for row in rows:
+            cols = st.columns(len(row))
+            for col, (image_path, file_name, details) in zip(cols, row):
+                with col:
+                    # Display image
                     if os.path.exists(image_path):
-                        col.image(image_path, caption=file_name, use_container_width=True)
+                        st.image(image_path, caption="", use_container_width=True)
                     else:
-                        col.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
+                        st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
-                    if col.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
-                        with col.expander(f"Details of {file_name}", expanded=True):
-                            for key, value in details.items():
-                                col.write(f"**{key}:** {value}")
+                    # Display the file name in one line
+                    st.markdown(
+                        f"<div style='text-align: center; font-size: 14px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
+                        unsafe_allow_html=True,
+                    )
+
+                    # Add details button with fixed width
+                    st.markdown(
+                        f"""
+                        <div style="display: flex; justify-content: center;">
+                            <button style="width: 100%; padding: 8px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; text-align: center;">
+                                Details: {file_name}
+                            </button>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
 
             # Create the PDF with filtered images and their details
             pdf_file = os.path.join(BASE_DIR, "filtered_weapon_images_details.pdf")
