@@ -36,7 +36,7 @@ engine = get_engine()
 @st.cache_data
 def load_data():
     query = """
-    SELECT * 
+    SELECT Weapon_Name, Weapon_Category, Type, Calliber, Length, Barrel_Length, Weight, Width, Height, Development, Manufacturere, Action, Range, Beam, Draught, Displacement, Compliment, Speed, tfidf_features, bert_embeddings, Downloded_Image_Name, Downloaded_Imge_Path 
     FROM dbo_final_text1
     WHERE Weapon_Name IN (
         SELECT DISTINCT Weapon_Name
