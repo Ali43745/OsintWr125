@@ -43,7 +43,7 @@ engine = get_engine()
 @st.cache_data
 def load_data():
     query = """
-    SELECT Weapon_Name,Type, Weapon_Category, Origin, Caliber, Length, Barrel_Length, Development  FROM dbo_final_text1
+    SELECT Weapon_Name,Type, Weapon_Category, Origin, Development, Caliber, Length, Barrel_Length, Weight, Width, Height FROM dbo_final_text1
     """
     return pd.read_sql(query, engine)
 
