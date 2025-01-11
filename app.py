@@ -333,9 +333,9 @@ else:
         """Load additional details for a given image from the database table."""
         try:
             query = f"""
-            SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Production AS 'Production Era', Origin, 
-                   Weapon_Category AS 'Weapon Type', Status, Designations AS 'Designation', Caliber
-            FROM weapon_data1
+            SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin, 
+                   Weapon_Category AS 'Weapon Category', Type, Caliber
+            FROM dbo_final_text1
             WHERE Downloaded_Image_Name = '{file_name}'
             """
             result = pd.read_sql(query, engine)
