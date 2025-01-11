@@ -15,20 +15,6 @@ import re
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from sqlalchemy.orm import sessionmaker
-
-Session = sessionmaker(bind=engine)
-session = Session()
-
-try:
-    details = session.execute(query).fetchall()
-    session.commit()
-except Exception as e:
-    session.rollback()  # Correct usage of rollback
-    print(f"Error: {e}")
-    raise
-finally:
-    session.close()
 
 
 
