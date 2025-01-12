@@ -76,28 +76,9 @@ if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page
     st.experimental_set_query_params(page=selected_page)
 
-weapon_types = [page["name"] for page in pages_config["pages"] if page["name"] != "News Section"]
-
 # Main Content Rendering Based on Selected Page
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
-    st.write("### Navigate by Weapon Type")
-    selected_weapon_type = st.selectbox("Select Weapon Type", ["Select"] + weapon_types)
-
-    # Navigate to the selected page
-    if selected_weapon_type != "Select":
-        # Update session state and set query params
-        st.session_state.current_page = selected_weapon_type
-        st.set_page_config(page_title=selected_weapon_type)
-        st.write(f"Redirecting to {selected_weapon_type} page...")
-        st.experimental_set_query_params(page=selected_weapon_type)
-
-        # Redirect logic using JavaScript for reload
-        st.markdown(f"""
-            <script>
-                window.location.href = '?page={selected_weapon_type}';
-            </script>
-        """, unsafe_allow_html=True)
 
    
     # Dashboard Page
