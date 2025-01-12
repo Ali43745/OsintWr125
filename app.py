@@ -385,7 +385,6 @@ else:
         
         # Display images and their details with improved layout
 
-    # Display images and their details with improved layout
     if filtered_image_details:
         st.write("### Weapon Images")
         cols_per_row = 3
@@ -408,13 +407,13 @@ else:
                 pdf.set_auto_page_break(auto=True, margin=15)
                 pdf.add_page()
 
-                # Add image to the PDF
+                # Add image to the PDF with consistent height
                 if os.path.exists(image_path):
-                    pdf.image(image_path, x=10, y=10, w=100)
+                    pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
 
                 # Add details to the PDF
                 pdf.set_font("Arial", size=12)
-                pdf.ln(110)  # Move below the image
+                pdf.ln(85)  # Adjust to keep consistent space below the image
                 for key, value in details.items():
                     safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
                     pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
@@ -451,8 +450,22 @@ else:
                         unsafe_allow_html=True,
                     )
 
-                    # Add a details button
-                    if st.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
+                    # Add a details button with consistent styling and equal length
+                    st.markdown(
+                        f"""
+                        <div style="display: flex; justify-content: center; margin-top: 8px;">
+                            <button style="width: 80%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                Details: {file_name}
+                            </button>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+
+                    # Add space after the button
+                    st.markdown("<br>", unsafe_allow_html=True)
+
+                    if st.button(f"View Details: {file_name}", key=f"details_button_{file_name}"):
                         st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
                         with st.expander(f"Details of {file_name}", expanded=True):
                             for key, value in details.items():
@@ -466,13 +479,13 @@ else:
 
                             # Add the image to the PDF
                             if os.path.exists(image_path):
-                                pdf.image(image_path, x=10, y=10, w=100)
+                                pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
 
                             # Add the details to the PDF
                             pdf.set_font("Arial", size=12)
-                            pdf.ln(110)  # Move below the image
+                            pdf.ln(85)  # Adjust to keep consistent space below the image
                             for key, value in details.items():
-                                safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
+                                safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')
                                 pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
 
                             # Save the PDF
