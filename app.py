@@ -412,7 +412,7 @@ else:
                     pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
 
                 # Add details to the PDF
-                pdf.set_font("Arial", size=12)
+                pdf.set_font("Arial", size=10)
                 pdf.ln(85)  # Adjust to keep consistent space below the image
                 for key, value in details.items():
                     safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
