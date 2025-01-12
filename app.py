@@ -443,7 +443,7 @@ else:
 
                         # Display the file name in one line below the image
                         st.markdown(
-                            f"<div style='text-align: center; font-size: 12px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
+                            f"<div style='text-align: center; font-size: 14px; background-color: #28a745; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
                             unsafe_allow_html=True,
                         )
 
