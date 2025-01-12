@@ -340,7 +340,7 @@ elif st.session_state.current_page == "News Section":
     # Display the news description
     # Display the news description
     st.write(
-        f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**,  )
+        f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}** )
 
     # Navigation buttons
     col1, col2, col3 = st.columns([1, 1, 1])
