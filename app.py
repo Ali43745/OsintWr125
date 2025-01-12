@@ -267,6 +267,8 @@ else:
     import pandas as pd
     import streamlit as st
     from fpdf import FPDF
+    import zipfile
+    from io import BytesIO
 
     # Dynamically get the current page
     current_page = st.session_state.current_page
