@@ -33,7 +33,7 @@ def get_engine():
 
 engine = get_engine()
 
-# Load data from weapon_data1 and join with dbo_images
+# Load data from weapon_data1 and join with dbo_images 
 # Load data from weapon_data1
 @st.cache_data
 def load_data():
