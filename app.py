@@ -537,6 +537,12 @@ else:
                 mime="application/zip",
             )
 
+            
+             # Normalize image names for display after all processing is done
+            def normalize_filename(file_name):
+                 """Replace underscores with spaces and capitalize each word in the filename."""
+                 normalized_name = file_name.replace("_", " ").title()  # Title-case and replace underscores
+                 return normalized_name
             # Display each image in a grid layout
             for row in rows:
                 cols = st.columns(len(row))
