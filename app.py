@@ -56,8 +56,6 @@ except Exception as e:
     st.error(f"Error loading pages.toml: {e}")
     st.stop()
 
-
-
 # Validate 'pages' key in the configuration
 if "pages" not in pages_config:
     st.error("'pages' key not found in the pages.toml file.")
@@ -78,8 +76,18 @@ if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page
     st.experimental_set_query_params(page=selected_page)
 
+weapon_types = [page["name"] for page in pages_config["pages"] if page["name"] != "News Section"]
+
 # Main Content Rendering Based on Selected Page
 if st.session_state.current_page == "Home":
+    # Dropdown for weapon types
+    st.write("### Navigate by Weapon Type")
+    selected_weapon_type = st.selectbox("Select Weapon Type", ["Select"] + weapon_types)
+
+    # Navigate to the selected page
+    if selected_weapon_type != "Select":
+        st.experimental_set_query_params(page=selected_weapon_type)
+        st.write(f"Redirecting to {selected_weapon_type} page...")  # Optional feedback
     # Dashboard Page
     st.title("Weapon Insights Dashboard")
     st.write("Explore weapon specifications, search, and visualize data interactively.")
@@ -87,7 +95,7 @@ if st.session_state.current_page == "Home":
     # Display filtered data
     st.write("### Filtered Data Table")
     st.dataframe(data)
-
+    
    # Filter the data to exclude origins starting with "source: "
     filtered_data = data[~data['Origin'].str.startswith('Source:', na=False)].drop(columns=['Source'], errors='ignore')
 
