@@ -397,7 +397,7 @@ else:
     # Function to find images directly based on the folder matching the category
     def find_images_for_category(base_folder, category_name):
         """Find all images in the folder directly matching the category name."""
-        (os.path.join(category_folder, file))
+        category_folder = os.path.join(base_folder, category_name)
         if os.path.exists(category_folder) and os.path.isdir(category_folder):
             images = [
                 (os.path.join(category_folder, file), file)
