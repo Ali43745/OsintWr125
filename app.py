@@ -446,7 +446,17 @@ else:
                             f"<div style='text-align: center; font-size: 14px; background-color: #28a745; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
                             unsafe_allow_html=True,
                         )
-
+                       # Add a single green details button with functionality and styled font size
+                        st.markdown(
+                            f"""
+                            <div style="display: flex; justify-content: center; margin-top: 8px;">
+                                <button style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">
+                                    Details: {file_name}
+                                </button>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
                         # Add a single green details button with functionality
                         if st.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
                             st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
