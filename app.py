@@ -257,7 +257,7 @@ if st.session_state.current_page == "Home":
                     )
                 # Add navigation button
                 cleaned_name =(category)
-                col.button(f"Go to {cleaned_name} Category through navigation bar")
+                col.button(f"Category Details")
                     
                 
                 
