@@ -481,9 +481,21 @@ else:
             available_origins = get_filter_options(filtered_image_details, "Origin")
 
             col1, col2 = st.columns(2)
+            
             with col1:
+                # Filter by Year
+                available_years = get_filter_options(filtered_image_details, "Development Era")
                 selected_year = st.selectbox("Filter by Year", options=available_years, key="year_filter")
+    
+            # Apply the year filter
+            if selected_year != "All":
+                filtered_image_details = [
+                   (image_path, file_name, details)
+                   for image_path, file_name, details in image_details
+                   if details.get("Development Era") == selected_year
+                    ]
             with col2:
+                available_origins = get_filter_options(filtered_image_details, "Origin")
                 selected_origin = st.selectbox("Filter by Origin", options=available_origins, key="origin_filter")
 
             # Apply filters
