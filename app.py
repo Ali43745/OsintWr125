@@ -267,7 +267,9 @@ elif st.session_state.current_page == "News Section":
     # Prepare the data for the news
     news_data = data[["Weapon_Name", "Type","Downloaded_Image_Name"]].dropna().reset_index(drop=True)
     total_news_items = len(news_data)
+    IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
 
+    
     # State to keep track of the current news index
     if "news_index" not in st.session_state:
         st.session_state.news_index = 0
