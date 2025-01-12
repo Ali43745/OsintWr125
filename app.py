@@ -446,6 +446,12 @@ else:
 
         pdf.output(output_file)
 
+    # Normalize image names for display after all processing is done
+    def normalize_filename(file_name):
+        """Replace underscores with spaces and capitalize each word in the filename."""
+        normalized_name = file_name.replace("_", " ").title()  # Title-case and replace underscores
+        return normalized_name
+
     # Get images for the current category
     images = find_images_for_category(IMAGE_FOLDER, current_page)
 
@@ -503,8 +509,9 @@ else:
             combined_zip_buffer = BytesIO()
             with zipfile.ZipFile(combined_zip_buffer, "w") as zip_file:
                 for image_path, file_name, details in filtered_image_details:
+                    normalized_file_name = normalize_filename(file_name)  # Normalize filename before using
                     if os.path.exists(image_path):
-                        zip_file.write(image_path, arcname=file_name)
+                        zip_file.write(image_path, arcname=normalized_file_name)
 
                     # Generate a PDF for the current image and its details
                     pdf = FPDF()
@@ -523,7 +530,7 @@ else:
                         pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
 
                     # Save the PDF to the ZIP
-                    pdf_file_path = f"{file_name}_details.pdf"
+                    pdf_file_path = f"{normalized_file_name}_details.pdf"
                     pdf.output(pdf_file_path)
                     zip_file.write(pdf_file_path, arcname=pdf_file_path)
 
@@ -537,16 +544,11 @@ else:
                 mime="application/zip",
             )
 
-            
-             # Normalize image names for display after all processing is done
-            def normalize_filename(file_name):
-                 """Replace underscores with spaces and capitalize each word in the filename."""
-                 normalized_name = file_name.replace("_", " ").title()  # Title-case and replace underscores
-                 return normalized_name
             # Display each image in a grid layout
             for row in rows:
                 cols = st.columns(len(row))
                 for col, (image_path, file_name, details) in zip(cols, row):
+                    normalized_file_name = normalize_filename(file_name)  # Normalize the filename here
                     with col:
                         # Display image with consistent height
                         if os.path.exists(image_path):
@@ -554,16 +556,16 @@ else:
                         else:
                             st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
-                        # Display the file name in one line below the image
+                        # Display the normalized file name
                         st.markdown(
-                            f"<div style='text-align: center; font-size: 14px; background-color: #28a745; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
+                            f"<div style='text-align: center; font-size: 14px; background-color: #28a745; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{normalized_file_name}</div>",
                             unsafe_allow_html=True,
                         )
-                       
+
                         # Add a single green details button with functionality
                         if st.button(f"See Details", key=f"details_button_{file_name}"):
                             st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
-                            with st.expander(f"Details of {file_name}", expanded=True):
+                            with st.expander(f"Details of {normalized_file_name}", expanded=True):
                                 for key, value in details.items():
                                     st.write(f"**{key}:** {value}")
 
@@ -585,7 +587,7 @@ else:
                                     pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
 
                                 # Save the PDF
-                                pdf_file_path = os.path.join(BASE_DIR, f"{file_name}_details.pdf")
+                                pdf_file_path = os.path.join(BASE_DIR, f"{normalized_file_name}_details.pdf")
                                 pdf.output(pdf_file_path)
 
                                 # Provide a download button for the PDF
@@ -593,7 +595,7 @@ else:
                                     st.download_button(
                                         label="Download PDF with Details",
                                         data=f,
-                                        file_name=f"{file_name}_details.pdf",
+                                        file_name=f"{normalized_file_name}_details.pdf",
                                         mime="application/pdf",
                                     )
 
@@ -602,7 +604,7 @@ else:
                                     st.download_button(
                                         label="Download Image",
                                         data=img_file,
-                                        file_name=file_name,
+                                        file_name=f"{normalized_file_name}.jpg",
                                         mime="image/jpeg",
                                     )
     else:
