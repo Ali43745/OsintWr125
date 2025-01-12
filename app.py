@@ -555,7 +555,7 @@ else:
                         )
                        
                         # Add a single green details button with functionality
-                        if st.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
+                        if st.button(f"See Details", key=f"details_button_{file_name}"):
                             st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
                             with st.expander(f"Details of {file_name}", expanded=True):
                                 for key, value in details.items():
