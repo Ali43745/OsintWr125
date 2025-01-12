@@ -338,7 +338,9 @@ elif st.session_state.current_page == "News Section":
     st.image(image_path, caption=f"Image for {current_news['Weapon_Name']}", use_container_width=True)
 
     # Display the news description
-    st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}** ")
+    # Display the news description
+    st.write(
+        f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**,  )
 
     # Navigation buttons
     col1, col2, col3 = st.columns([1, 1, 1])
