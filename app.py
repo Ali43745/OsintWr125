@@ -265,7 +265,7 @@ elif st.session_state.current_page == "News Section":
     st.write("### News Section")
 
     # Prepare the data for the news
-    news_data = data[["Weapon_Name", "Type","Downloaded_Image_Name"]].dropna().reset_index(drop=True)
+    news_data = data[["Weapon_Name", "Type","Development", "Downloaded_Image_Name"]].dropna().reset_index(drop=True)
     total_news_items = len(news_data)
     IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
 
@@ -299,7 +299,7 @@ elif st.session_state.current_page == "News Section":
 
         # Add the details
         pdf.set_font("Arial", size=12)
-        for key in ["Weapon_Name", "Weapon_Category", "Development", "Weight", "Status"]:
+        for key in ["Weapon_Name", "Type", "Development"]:
             pdf.cell(0, 10, f"{key.replace('_', ' ')}: {news_item[key]}", ln=True)
 
         # Save the PDF
