@@ -84,14 +84,22 @@ if st.session_state.current_page == "Home":
     st.write("### Navigate by Weapon Type")
     selected_weapon_type = st.selectbox("Select Weapon Type", ["Select"] + weapon_types)
 
-     # Navigate to the selected page
+    # Navigate to the selected page
     if selected_weapon_type != "Select":
-        # Update the query parameters and rerun
-        st.experimental_set_query_params(page=selected_weapon_type)
+        # Update session state and set query params
         st.session_state.current_page = selected_weapon_type
-        st.experimental_rerun()  # Rerun to reload the app for the new page
+        st.set_page_config(page_title=selected_weapon_type)
+        st.write(f"Redirecting to {selected_weapon_type} page...")
+        st.experimental_set_query_params(page=selected_weapon_type)
 
-    
+        # Redirect logic using JavaScript for reload
+        st.markdown(f"""
+            <script>
+                window.location.href = '?page={selected_weapon_type}';
+            </script>
+        """, unsafe_allow_html=True)
+
+   
     # Dashboard Page
     st.title("Weapon Insights Dashboard")
     st.write("Explore weapon specifications, search, and visualize data interactively.")
