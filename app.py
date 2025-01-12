@@ -404,7 +404,6 @@ else:
                 for file in os.listdir(category_folder)
                 if file.lower().endswith((".png", ".jpg", ".jpeg"))
             ]
-            images = [(path, name.replace("_", " ")) for path, name in images]
             return images
         return []
 
