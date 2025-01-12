@@ -317,7 +317,7 @@ elif st.session_state.current_page == "News Section":
         Type = current_news["Type"].replace(" ", "_")
 
         # Construct the folder path
-        category_folder = os.path.join(IMAGE_FOLDER, weapon_category)
+        category_folder = os.path.join(IMAGE_FOLDER, Type)
 
         # Normalize filenames for better matching
         def normalize_name(name):
