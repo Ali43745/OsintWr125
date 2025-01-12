@@ -382,132 +382,113 @@ else:
             # Stop infinite loop
             break
 
-        
         # Display images and their details with improved layout
+        if filtered_image_details:
+            st.write("### Weapon Images")
+            cols_per_row = 3
+            rows = [
+                filtered_image_details[i: i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)
+            ]
 
-    if filtered_image_details:
-        st.write("### Weapon Images")
-        cols_per_row = 3
-        rows = [
-            filtered_image_details[i: i + cols_per_row] for i in range(0, len(filtered_image_details), cols_per_row)
-        ]
-
-        # Combined Download: Create a ZIP file for all filtered images and their PDFs
-        import zipfile
-        from io import BytesIO
-
-        combined_zip_buffer = BytesIO()
-        with zipfile.ZipFile(combined_zip_buffer, "w") as zip_file:
-            for image_path, file_name, details in filtered_image_details:
-                if os.path.exists(image_path):
-                    zip_file.write(image_path, arcname=file_name)
-
-                # Generate a PDF for the current image and its details
-                pdf = FPDF()
-                pdf.set_auto_page_break(auto=True, margin=15)
-                pdf.add_page()
-
-                # Add image to the PDF with consistent height
-                if os.path.exists(image_path):
-                    pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
-
-                # Add details to the PDF
-                pdf.set_font("Arial", size=10)
-                pdf.ln(85)  # Adjust to keep consistent space below the image
-                for key, value in details.items():
-                    safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
-                    pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
-
-                # Save the PDF to the ZIP
-                pdf_file_path = f"{file_name}_details.pdf"
-                pdf.output(pdf_file_path)
-                zip_file.write(pdf_file_path, arcname=pdf_file_path)
-
-        combined_zip_buffer.seek(0)
-
-        # Add a download button for all filtered images and PDFs
-        st.download_button(
-            label="Download All Filtered Images and Details",
-            data=combined_zip_buffer,
-            file_name="filtered_images_and_details.zip",
-            mime="application/zip",
-        )
-
-        # Display each image in a grid layout
-        for row in rows:
-            cols = st.columns(len(row))
-            for col, (image_path, file_name, details) in zip(cols, row):
-                with col:
-                    # Display image with consistent height
+            # Combined Download: Create a ZIP file for all filtered images and their PDFs
+            combined_zip_buffer = BytesIO()
+            with zipfile.ZipFile(combined_zip_buffer, "w") as zip_file:
+                for image_path, file_name, details in filtered_image_details:
                     if os.path.exists(image_path):
-                        st.image(image_path, caption="", use_container_width=True, output_format="JPEG")
-                    else:
-                        st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
+                        zip_file.write(image_path, arcname=file_name)
 
-                    # Display the file name in one line below the image
-                    st.markdown(
-                        f"<div style='text-align: center; font-size: 14px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
-                        unsafe_allow_html=True,
-                    )
+                    # Generate a PDF for the current image and its details
+                    pdf = FPDF()
+                    pdf.set_auto_page_break(auto=True, margin=15)
+                    pdf.add_page()
 
-                    # Add a details button with consistent styling and equal length
-                    st.markdown(
-                        f"""
-                        <div style="display: flex; justify-content: center; margin-top: 8px;">
-                            <button style="width: 80%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                Details: {file_name}
-                            </button>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
+                    # Add image to the PDF with consistent height
+                    if os.path.exists(image_path):
+                        pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
 
-                    # Add space after the button
-                    st.markdown("<br>", unsafe_allow_html=True)
+                    # Add details to the PDF
+                    pdf.set_font("Arial", size=10)
+                    pdf.ln(85)  # Adjust to keep consistent space below the image
+                    for key, value in details.items():
+                        safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')  # Handle unsupported characters
+                        pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
 
-                    if st.button(f"View Details: {file_name}", key=f"details_button_{file_name}"):
-                        st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
-                        with st.expander(f"Details of {file_name}", expanded=True):
-                            for key, value in details.items():
-                                st.write(f"**{key}:** {value}")
+                    # Save the PDF to the ZIP
+                    pdf_file_path = f"{file_name}_details.pdf"
+                    pdf.output(pdf_file_path)
+                    zip_file.write(pdf_file_path, arcname=pdf_file_path)
 
-                            # Individual Downloads
-                            # Create a PDF for the selected image and its details
-                            pdf = FPDF()
-                            pdf.set_auto_page_break(auto=True, margin=15)
-                            pdf.add_page()
+            combined_zip_buffer.seek(0)
 
-                            # Add the image to the PDF
-                            if os.path.exists(image_path):
-                                pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
+            # Add a download button for all filtered images and PDFs
+            st.download_button(
+                label="Download All Filtered Images and Details",
+                data=combined_zip_buffer,
+                file_name="filtered_images_and_details.zip",
+                mime="application/zip",
+            )
 
-                            # Add the details to the PDF
-                            pdf.set_font("Arial", size=12)
-                            pdf.ln(85)  # Adjust to keep consistent space below the image
-                            for key, value in details.items():
-                                safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')
-                                pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
+            # Display each image in a grid layout
+            for row in rows:
+                cols = st.columns(len(row))
+                for col, (image_path, file_name, details) in zip(cols, row):
+                    with col:
+                        # Display image with consistent height
+                        if os.path.exists(image_path):
+                            st.image(image_path, caption="", use_container_width=True, output_format="JPEG")
+                        else:
+                            st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
-                            # Save the PDF
-                            pdf_file_path = os.path.join(BASE_DIR, f"{file_name}_details.pdf")
-                            pdf.output(pdf_file_path)
+                        # Display the file name in one line below the image
+                        st.markdown(
+                            f"<div style='text-align: center; font-size: 14px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{file_name}</div>",
+                            unsafe_allow_html=True,
+                        )
 
-                            # Provide a download button for the PDF
-                            with open(pdf_file_path, "rb") as f:
-                                st.download_button(
-                                    label="Download PDF with Details",
-                                    data=f,
-                                    file_name=f"{file_name}_details.pdf",
-                                    mime="application/pdf",
-                                )
+                        # Add a single green details button with functionality
+                        if st.button(f"Details: {file_name}", key=f"details_button_{file_name}"):
+                            st.markdown("<br>", unsafe_allow_html=True)  # Add space after the button
+                            with st.expander(f"Details of {file_name}", expanded=True):
+                                for key, value in details.items():
+                                    st.write(f"**{key}:** {value}")
 
-                            # Provide a download button for the image itself
-                            with open(image_path, "rb") as img_file:
-                                st.download_button(
-                                    label="Download Image",
-                                    data=img_file,
-                                    file_name=file_name,
-                                    mime="image/jpeg",
-                                )
+                                # Individual Downloads
+                                # Create a PDF for the selected image and its details
+                                pdf = FPDF()
+                                pdf.set_auto_page_break(auto=True, margin=15)
+                                pdf.add_page()
+
+                                # Add the image to the PDF
+                                if os.path.exists(image_path):
+                                    pdf.image(image_path, x=10, y=10, w=100, h=75)  # Ensure consistent height
+
+                                # Add the details to the PDF
+                                pdf.set_font("Arial", size=12)
+                                pdf.ln(85)  # Adjust to keep consistent space below the image
+                                for key, value in details.items():
+                                    safe_value = str(value).encode('latin-1', 'ignore').decode('latin-1')
+                                    pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
+
+                                # Save the PDF
+                                pdf_file_path = os.path.join(BASE_DIR, f"{file_name}_details.pdf")
+                                pdf.output(pdf_file_path)
+
+                                # Provide a download button for the PDF
+                                with open(pdf_file_path, "rb") as f:
+                                    st.download_button(
+                                        label="Download PDF with Details",
+                                        data=f,
+                                        file_name=f"{file_name}_details.pdf",
+                                        mime="application/pdf",
+                                    )
+
+                                # Provide a download button for the image itself
+                                with open(image_path, "rb") as img_file:
+                                    st.download_button(
+                                        label="Download Image",
+                                        data=img_file,
+                                        file_name=file_name,
+                                        mime="image/jpeg",
+                                    )
     else:
         st.warning("No images match the selected filters.")
