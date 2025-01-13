@@ -245,7 +245,7 @@ if st.session_state.current_page == "Home":
         cleaned_name = " ".join(parts[1:]).title()
         return cleaned_name
 
-    for row in rows:
+for row in rows:
         cols = st.columns(len(row))
         for col, category in zip(cols, row):
             # Clean the category name by replacing "_" with " " and capitalizing words
@@ -273,7 +273,7 @@ if st.session_state.current_page == "Home":
                         )
 
                 # Add expander for details
-                with col.expander(f"Details of {cleaned_category_name} ⬇️", expanded=False):
+                with col.expander(f"Details of {cleaned_category_name} \u2b07", expanded=False):
                     st.write(f"### Details of {cleaned_category_name}")
 
                     # Count the total number of images and unique Weapon Categories using the DataFrame
