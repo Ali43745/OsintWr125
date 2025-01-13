@@ -479,32 +479,38 @@ elif st.session_state.current_page == "News Section":
         if key != "Downloaded_Image_Name" and value != "Unknown":
             st.write(f"**{key.replace('_', ' ')}:** {value}")
 
+     # Navigation buttons for the news section
     col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
-        if st.button("⬅️ Previous", key="prev_button"):
-            update_news_index(-1)
-    with col3:
-        if st.button("➡️ Next", key="next_button"):
-            update_news_index(1)
 
-    pdf_data = BytesIO()
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt=f"News for {current_news['Weapon_Name']}", ln=True)
-    for key, value in current_news.items():
-        if value != "Unknown":
-            pdf.cell(200, 10, txt=f"{key}: {value}", ln=True)
-    pdf.output(pdf_data)
-    pdf_data.seek(0)
+    # Check to ensure the navigation happens within the News Section page
+    if st.session_state.current_page == "News Section":
+        with col1:
+            if st.button("⬅️ Previous", key="prev_button"):
+                update_news_index(-1)  # Move to the previous news item
+                st.session_state.current_page = "News Section"  # Stay in the News Section
 
-    with col2:
-        st.download_button(
-            label="Download Current News as PDF",
-            data=pdf_data,
-            file_name=f"{current_news['Weapon_Name'].replace(' ', '_')}_news.pdf",
-            mime="application/pdf"
-        )
+        with col3:
+            if st.button("➡️ Next", key="next_button"):
+                update_news_index(1)  # Move to the next news item
+                st.session_state.current_page = "News Section"  # Stay in the News Section
+
+        # Download news as PDF button
+        pdf_path = generate_single_news_pdf(current_news, image_path)
+        with col2:
+            st.download_button(
+                label="Download Current News as PDF",
+                data=open(pdf_path, "rb").read(),
+                file_name=os.path.basename(pdf_path),
+                mime="application/pdf",
+                key="news_pdf_download"
+            )
+        os.remove(pdf_path)  # Clean up temporary file
+
+
+
+
+
+
 
 
 else:
