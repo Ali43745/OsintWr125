@@ -592,12 +592,6 @@ else:
     # Cleaned display name (replace "_" with " " and title case)
     display_name = current_page.replace("_", " ").title()
 
-    # Display the cleaned Page Title
-    st.title(f"{display_name}")
-
-    # Add description or further dynamic content
-    st.write(f"This is the dynamically created page for **{display_name}**.")
-
     # Base image directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     IMAGE_FOLDER = os.path.join(BASE_DIR, "normalized_images")
