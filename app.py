@@ -76,7 +76,7 @@ page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page.lower().replace(" ", "-")
+    st.session_state.current_page = selected_page.title().replace(" ", "-")
     st.experimental_set_query_params(page=st.session_state.current_page)
 
 # Separate buttons for News Section and AI Prediction Visualizations
@@ -582,6 +582,9 @@ else:
 
     # Dynamically get the current page
     current_page = st.session_state.current_page
+
+    # Normalize current page name to match directory naming convention
+    normalized_current_page = current_page.replace(" ", "_").lower()
 
     # Display the Page Title
     st.title(f"{current_page}")
