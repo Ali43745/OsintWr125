@@ -90,7 +90,7 @@ if st.sidebar.button("📜 News Section"):
 # Add "News Section" as a separate button
 if st.sidebar.button("📜 AI Prediction Visualizations"):
     st.session_state.current_page = "AI Prediction Visualizations"
-
+    st.experimental_set_query_params(page="News Section")
 
 
 # Main Content Rendering Based on Selected Page
