@@ -403,8 +403,7 @@ elif st.session_state.current_page == "News Section":
     news_data = data[[
         "Weapon_Name", "Type", "Weapon_Category", "Origin", "Development", "Caliber",
         "Length", "Barrel_Length", "Weight", "Width", "Height", "Action", "Complement",
-        "Speed", "text", "Predicted_Type", "Type_Numerical_Label", "Predicted_Type_Label"
-    ]].dropna().reset_index(drop=True)
+        "Speed"]].dropna().reset_index(drop=True)
     
     total_news_items = len(news_data)
     IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
@@ -482,8 +481,7 @@ elif st.session_state.current_page == "News Section":
     st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**.")
     for key in [
         "Weapon_Category", "Origin", "Caliber", "Length", "Barrel_Length", "Weight",
-        "Width", "Height", "Action", "Complement", "Speed", "text", "Predicted_Type",
-        "Type_Numerical_Label", "Predicted_Type_Label"
+        "Width", "Height", "Action", "Complement", "Speed", "text"
     ]:
         st.write(f"**{key.replace('_', ' ')}:** {current_news[key]}")
 
