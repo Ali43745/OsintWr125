@@ -72,8 +72,11 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names =[page["name"] for page in pages_config["pages"]]
-selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+page_names = [page["name"].replace("_", " ").title() for page in pages_config["pages"]]
+page_name_mapping = {page["name"].replace("_", " ").title(): page["name"] for page in pages_config["pages"]}
+
+selected_cleaned_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+selected_page = page_name_mapping[selected_cleaned_page]
 
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page.title().replace(" ", "-")
@@ -592,21 +595,8 @@ else:
     # Display the cleaned Page Title
     st.title(f"{display_name}")
 
-    # Display the cleaned Category Heading
-    st.header(f"Category: {display_name}")
-
     # Add description or further dynamic content
     st.write(f"This is the dynamically created page for **{display_name}**.")
-
-
-    # Display the Page Title
-    st.title(f"{current_page}")
-
-    # Display the Category Heading
-    st.header(f"Category: {current_page}")
-
-    # Add description or further dynamic content
-    st.write(f"This is the dynamically created page for **{current_page}**.")
 
     # Base image directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
