@@ -75,7 +75,7 @@ if "pages" not in pages_config:
 # Function to get current page from URL
 def get_current_page():
     params = st.experimental_get_query_params()
-    return params.get("page", ["home"])[0]  # Default to "home"
+    return params.get("page", ["Home"])[0]  # Default to "home"
 
 # Handle Page Navigation
 if "current_page" not in st.session_state:
@@ -83,7 +83,7 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = [page["name"] for page in pages_config["pages"]]
+page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
