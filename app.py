@@ -90,7 +90,7 @@ page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.radio("Select Page", page_names, key="page_selector")
 
 # Update the current page based on selection
-if selected_special_page:
+if selected_page:
     st.session_state.current_page = selected_special_page
 else:
     st.session_state.current_page = selected_page
