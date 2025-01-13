@@ -297,36 +297,42 @@ if st.session_state.current_page == "Home":
                     with zipfile.ZipFile(combined_zip_buffer, "w") as zip_file:
                         for file_name in images_in_category:
                             image_path = os.path.join(category_dir, file_name)
-                            zip_file.write(image_path, arcname=file_name)
+                            try:
+                                zip_file.write(image_path, arcname=file_name)
 
-                            # Fetch details for the image from the DataFrame
-                            image_details = filtered_data[filtered_data["Downloaded_Image_Name"] == file_name].to_dict(orient="records")
-                            if image_details:
-                                details = image_details[0]
+                                # Fetch details for the image from the DataFrame
+                                image_details = filtered_data[filtered_data["Downloaded_Image_Name"] == file_name].to_dict(orient="records")
+                                if image_details:
+                                    details = image_details[0]
 
-                                # Create a PDF with details for each image
-                                pdf = FPDF()
-                                pdf.set_auto_page_break(auto=True, margin=15)
-                                pdf.add_page()
-                                pdf.set_font("Arial", size=12)
-                                pdf.cell(0, 10, f"Details of {file_name.replace('_', ' ')}", ln=True)
-                                pdf.ln(10)
+                                    # Create a PDF with details for each image
+                                    pdf = FPDF()
+                                    pdf.set_auto_page_break(auto=True, margin=15)
+                                    pdf.add_page()
+                                    pdf.set_font("Arial", size=12)
+                                    pdf.cell(0, 10, f"Details of {file_name.replace('_', ' ')}", ln=True)
+                                    pdf.ln(10)
 
-                                for key, value in details.items():
-                                    if pd.notna(value):
-                                        # Safely encode values
-                                        safe_value = str(value).replace("’", "'")
-                                        key_cleaned = key.replace("_", " ").title()  # Clean key names for better readability
-                                        try:
-                                            pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
-                                        except UnicodeEncodeError:
-                                             st.warning(f"Skipped unsupported characters in {key_cleaned}")
+                                    for key, value in details.items():
+                                        if pd.notna(value):
+                                            # Safely encode values
+                                            safe_value = str(value).replace("’", "'")
+                                            key_cleaned = key.replace("_", " ").title()  # Clean key names for better readability
+                                            try:
+                                                pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
+                                            except UnicodeEncodeError:
+                                                # Skip problematic characters
+                                                continue
 
-                                # Save the PDF
-                                pdf_file_path = f"{file_name.replace('_', ' ')}_details.pdf"
-                                pdf.output(pdf_file_path)
-                                zip_file.write(pdf_file_path, arcname=pdf_file_path)
-                                os.remove(pdf_file_path)  # Clean up temporary PDF files
+                                    # Save the PDF
+                                    pdf_file_path = f"{file_name.replace('_', ' ')}_details.pdf"
+                                    pdf.output(pdf_file_path)
+                                    zip_file.write(pdf_file_path, arcname=pdf_file_path)
+                                    os.remove(pdf_file_path)  # Clean up temporary PDF files
+
+                            except Exception:
+                                # Skip problematic files silently
+                                continue
 
                     combined_zip_buffer.seek(0)
 
@@ -342,7 +348,6 @@ if st.session_state.current_page == "Home":
                 col.image(placeholder_image_path, caption=f"{cleaned_category_name} (Placeholder)", use_container_width=True)
             else:
                 col.error(f"No image available for {cleaned_category_name}")
-
 
 # AI Prediction visualizations
 elif st.session_state.current_page == "ai-prediction":
