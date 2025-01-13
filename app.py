@@ -304,7 +304,7 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
     st.write("### Actual vs Predicted Weapon Types")
     fig1, ax1 = plt.subplots(figsize=(10, 6))
     sns.countplot(
-        data=data.melt(id_vars=["Weapon_Name"], value_vars=["Type_Label", "Predicted_Type"]),
+        data=data.melt(id_vars=["Weapon_Name"], value_vars=["Type_Numerical_Label", "Predicted_Type"]),
         x="value",
         hue="variable",
         ax=ax1,
