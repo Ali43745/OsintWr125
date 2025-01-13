@@ -241,42 +241,96 @@ if st.session_state.current_page == "home":
         parts = name.split("_")
         cleaned_name = " ".join(parts[1:]).title()
         return cleaned_name
-   
 
     for row in rows:
         cols = st.columns(len(row))
         for col, category in zip(cols, row):
             # Image logic remains the same
             category_dir = os.path.join(IMAGE_FOLDER, category.replace(" ", "_"))
-            category_image = None
+            images_in_category = []
 
             if os.path.exists(category_dir) and os.path.isdir(category_dir):
                 for file_name in os.listdir(category_dir):
                     if file_name.lower().endswith((".png", ".jpg", ".jpeg")):
-                        category_image = os.path.join(category_dir, file_name)
-                        break
+                        images_in_category.append(file_name)
 
             # Display image or placeholder
-            if category_image and os.path.exists(category_image):
-                col.image(category_image, caption=category, use_container_width=True)
+            if images_in_category:
+                first_image = os.path.join(category_dir, images_in_category[0])
+                col.image(first_image, caption=category, use_container_width=True)
                 with col:
-                    with open(category_image, "rb") as file:
-                      col.download_button(
-                        label="Download as PNG",
-                        data=file,
-                        file_name=os.path.basename(category_image),
-                        mime="image/png"
+                    with open(first_image, "rb") as file:
+                        col.download_button(
+                            label="Download as PNG",
+                            data=file,
+                            file_name=os.path.basename(first_image),
+                            mime="image/png"
+                        )
+                # Add navigation button to show details
+                if col.button(f"Details of {category}"):
+                    st.write(f"### Details of {category}")
+
+                    # Count the total number of images and unique Weapon_Categories
+                    query = f"""
+                    SELECT COUNT(*) AS total_images, COUNT(DISTINCT Weapon_Category) AS unique_categories
+                    FROM dbo_final_text1
+                    WHERE Type = '{category}'
+                    """
+                    details_result = pd.read_sql(query, engine).iloc[0]
+                    total_images = details_result['total_images']
+                    unique_categories = details_result['unique_categories']
+
+                    st.write(f"**Total Weapons:** {total_images}")
+                    st.write(f"**Unique Weapon Categories:** {unique_categories}")
+
+                    # Create a ZIP file of all images and details
+                    combined_zip_buffer = BytesIO()
+                    with zipfile.ZipFile(combined_zip_buffer, "w") as zip_file:
+                        for file_name in images_in_category:
+                            image_path = os.path.join(category_dir, file_name)
+                            zip_file.write(image_path, arcname=file_name)
+
+                            # Fetch details for the image
+                            query_details = f"""
+                            SELECT *
+                            FROM dbo_final_text1
+                            WHERE Downloaded_Image_Name = '{file_name}'
+                            """
+                            details = pd.read_sql(query_details, engine).to_dict(orient="records")
+                            if details:
+                                details = details[0]
+
+                                # Create a PDF with details for each image
+                                pdf = FPDF()
+                                pdf.set_auto_page_break(auto=True, margin=15)
+                                pdf.add_page()
+                                pdf.set_font("Arial", size=12)
+                                pdf.cell(0, 10, f"Details of {file_name}", ln=True)
+                                pdf.ln(10)
+
+                                for key, value in details.items():
+                                    if pd.notna(value):
+                                        pdf.cell(0, 10, f"{key}: {value}", ln=True)
+                                pdf_file_path = f"{file_name}_details.pdf"
+                                pdf.output(pdf_file_path)
+                                zip_file.write(pdf_file_path, arcname=pdf_file_path)
+                                os.remove(pdf_file_path)  # Clean up temporary PDF files
+
+                    combined_zip_buffer.seek(0)
+
+                    # Download button for ZIP file
+                    st.download_button(
+                        label="Download All Images and Details as ZIP",
+                        data=combined_zip_buffer,
+                        file_name=f"{category}_images_and_details.zip",
+                        mime="application/zip",
                     )
-                # Add navigation button
-                cleaned_name =(category)
-                col.button(f"{cleaned_name}")
-                    
-                
-                
+
             elif os.path.exists(placeholder_image_path):
                 col.image(placeholder_image_path, caption=f"{category} (Placeholder)", use_container_width=True)
             else:
                 col.error(f"No image available for {category}")
+
 
 
 #AI Prediction Visualizations
