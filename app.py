@@ -266,6 +266,11 @@ if st.session_state.current_page == "Home":
             else:
                 col.error(f"No image available for {category}")
 
+
+#AI Prediction Visualizations
+elif st.session_state.current_page == "AI Prediction Visualizations":
+    st.write("### Prediction Table")
+    
 # News Section
 elif st.session_state.current_page == "News Section":
     st.write("### News Section")
