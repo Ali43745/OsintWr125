@@ -119,7 +119,20 @@ if st.session_state.current_page == "Home":
             title="Threat Distribution by Origin",
             labels={"Weapon_Name": "Weapon Name", "Origin": "Country of Origin"},
         )
+        
+        # Customize Y-axis tick labels
+        fig.update_layout(
+            yaxis=dict(
+                tickmode="array",
+                tickvals=list(range(len(filtered_data["Weapon_Name"]))),
+                ticktext=filtered_data["Weapon_Name"]
+            )
+        )
+
+        # Display the chart
         st.plotly_chart(fig)
+
+    
     else:
         st.warning("No data available for visualization.")
 
