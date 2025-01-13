@@ -80,7 +80,7 @@ if selected_page != st.session_state.current_page:
 # Add "News Section" as a separate button
 if st.sidebar.button("📜 News Section"):
     st.session_state.current_page = "News Section"
-    st.experimental_set_query_params(page="News Section")
+ 
 
 # Add "News Section" as a separate button
 if st.sidebar.button("📜 AI Prediction Visualizations"):
