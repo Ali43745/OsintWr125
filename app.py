@@ -4,7 +4,7 @@ import os
 import plotly.express as px
 from sqlalchemy import create_engine
 import toml
-from fpdf import FPDF
+from fpdf import FPDF 
 from pathlib import Path
 import os
 import torch
