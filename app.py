@@ -280,7 +280,7 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
     # Load CSV file
     @st.cache_data
     def load_predictions():
-        df = pd.read_csv("Weapon_predictions_with_labels.csv")
+        df = pd.read_csv("weapon_predictions_with_labels.csv")
         # Remove rows with "Unknown" values
         df = df.replace("Unknown", pd.NA).dropna()
         return df
