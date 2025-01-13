@@ -314,10 +314,13 @@ if st.session_state.current_page == "Home":
 
                                 for key, value in details.items():
                                     if pd.notna(value):
-                                        # Clean any special characters
-                                        safe_value = str(value).replace("’", "'").encode('latin-1', 'ignore').decode('latin-1')
+                                        # Safely encode values
+                                        safe_value = str(value).replace("’", "'")
                                         key_cleaned = key.replace("_", " ").title()  # Clean key names for better readability
-                                        pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
+                                        try:
+                                            pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
+                                        except UnicodeEncodeError:
+                                            pdf.cell(0, 10, f"{key_cleaned}: {safe_value.encode('utf-8', 'ignore').decode('utf-8')}", ln=True)
 
                                 # Save the PDF
                                 pdf_file_path = f"{file_name.replace('_', ' ')}_details.pdf"
