@@ -87,16 +87,16 @@ selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_select
 
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page.title().replace(" ", "-")
-    st.experimental_set_query_params(page=st.session_state.current_page)
+    st.set_query_params(page=st.session_state.current_page)
 
 # Separate buttons for News Section and AI Prediction Visualizations
 if st.sidebar.button("📜 News Section"):
     st.session_state.current_page = "News-Section"
-    st.experimental_set_query_params(page="News-Section")
+    st.set_query_params(page="News-Section")
 
 if st.sidebar.button("🔍 AI Prediction Visualizations"):
     st.session_state.current_page = "ai-prediction"
-    st.experimental_set_query_params(page="ai-prediction")
+    st.set_query_params(page="ai-prediction")
 
 # Render pages based on URL
 current_page = st.session_state.current_page
