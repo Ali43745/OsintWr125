@@ -99,7 +99,7 @@ current_page = st.session_state.current_page
 
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
-
+    print("i am googd")
    
     # Dashboard Page
     st.title("Weapon Insights Dashboard")
