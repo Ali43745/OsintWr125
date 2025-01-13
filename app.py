@@ -61,15 +61,10 @@ if "pages" not in pages_config:
     st.error("'pages' key not found in the pages.toml file.")
     st.stop()
 
-
-# Function to get current page from URL
 # Function to get current page from URL
 def get_current_page():
     params = st.experimental_get_query_params()
     return params.get("page", ["home"])[0]  # Default to "home"
-
-current_page = get_current_page()
-st.session_state.current_page = current_page
 
 # Handle Page Navigation
 if "current_page" not in st.session_state:
@@ -77,31 +72,28 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] not in ["News Section", "AI Prediction Visualizations"]]  # Exclude News Section
+page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page
-    st.experimental_set_query_params(page=selected_page)
+    st.session_state.current_page = selected_page.lower().replace(" ", "-")
+    st.experimental_set_query_params(page=st.session_state.current_page)
 
-
-# Add "News Section" as a separate button
-if st.sidebar.button("📜 Home"):
-    st.session_state.current_page = "Home"
-    
- 
+# Separate buttons for News Section and AI Prediction Visualizations
 if st.sidebar.button("📜 News Section"):
     st.session_state.current_page = "news-section"
     st.experimental_set_query_params(page="news-section")
 
+if st.sidebar.button("🔍 AI Prediction Visualizations"):
+    st.session_state.current_page = "ai-prediction"
+    st.experimental_set_query_params(page="ai-prediction")
 
-# Add "News Section" as a separate button
-if st.sidebar.button("📜 AI Prediction Visualizations"):
-    st.session_state.current_page = "AI Prediction Visualizations"
-    st.experimental_set_query_params(page="News Section")
-
-
+# Render pages based on URL
+current_page = st.session_state.current_page
 # Main Content Rendering Based on Selected Page
+
+
+
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
 
