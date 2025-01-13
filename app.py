@@ -41,15 +41,16 @@ def load_data():
     query = """
     SELECT Weapon_Name, Source, Type, Weapon_Category, Origin, Development, Caliber, Length, Barrel_Length, Weight, Width, Height, Action, Complement, Speed, Downloaded_Image_Name FROM dbo_final_text1
     """
-    return pd.read_sql(query, engine)
+    data = pd.read_sql(query, engine)
     
     # Ensure all "Origin" entries are in title format
     data['Origin'] = data['Origin'].str.title()
     
     # Exclude rows where "Origin" contains "7.5 cm Feldkanone 18 int."
-    data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18", case=False, na=False)]
+    data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18 Int.", case=False, na=False)]
     
-
+    return data
+    
 data = load_data()
 
 # Resolve the directory path
