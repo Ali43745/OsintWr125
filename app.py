@@ -254,7 +254,7 @@ if st.session_state.current_page == "Home":
         cleaned_name = " ".join(parts[1:]).title()
         return cleaned_name
 
-for row in rows:
+    for row in rows:
         cols = st.columns(len(row))
         for col, category in zip(cols, row):
             # Clean the category name by replacing "_" with " " and capitalizing words
@@ -310,15 +310,13 @@ for row in rows:
                                 pdf.set_auto_page_break(auto=True, margin=15)
                                 pdf.add_page()
                                 pdf.set_font("Arial", size=12)
-
-                                # Add title
                                 pdf.cell(0, 10, f"Details of {file_name.replace('_', ' ')}", ln=True)
                                 pdf.ln(10)
 
                                 for key, value in details.items():
                                     if pd.notna(value):
                                         # Clean any special characters
-                                        safe_value = str(value).replace("’", "'").encode('ascii', 'ignore').decode('ascii')
+                                        safe_value = str(value).replace("’", "'").encode('latin-1', 'ignore').decode('latin-1')
                                         key_cleaned = key.replace("_", " ").title()  # Clean key names for better readability
                                         pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
 
@@ -342,7 +340,6 @@ for row in rows:
                 col.image(placeholder_image_path, caption=f"{cleaned_category_name} (Placeholder)", use_container_width=True)
             else:
                 col.error(f"No image available for {cleaned_category_name}")
-
 
 
 # AI Prediction visualizations
