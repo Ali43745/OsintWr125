@@ -280,7 +280,7 @@ if st.session_state.current_page == "Home":
 
 
 #AI Prediction Visualizations
-elif st.session_state.current_page == "AI Prediction Visualizations":
+elif st.session_state.current_page == "ai-prediction":
     st.write("### AI Prediction Analysis")
     # Load CSV file
     @st.cache_data
