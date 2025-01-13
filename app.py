@@ -73,7 +73,7 @@ if "pages" not in pages_config:
 
 # Function to get current page from URL
 def get_current_page():
-    params = st.experimental_get_query_params()
+    params = st.get_query_params()
     return params.get("page", ["home"])[0]  # Default to "home"
 
 # Handle Page Navigation
