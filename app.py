@@ -369,7 +369,7 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
     
     # 5. Display Confusion Matrix Image
     st.write("### Confusion Matrix of Model 1")
-    confusion_matrix_path = "path/to/confusion_matrix_model1.png"  # Replace with actual file path
+    confusion_matrix_path = "confusion_matrix_model1.png"  # Replace with actual file path
     st.image(confusion_matrix_path, caption="Confusion Matrix - Model 1", use_column_width=True)
 
     # Download Confusion Matrix Image
@@ -383,7 +383,7 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
 
     # 6. Display ROC Curve Image
     st.write("### ROC Curve of Model 1")
-    roc_curve_path = "path/to/roc_curve_model1.png"  # Replace with actual file path
+    roc_curve_path = "roc_curve_model1.png"  # Replace with actual file path
     st.image(roc_curve_path, caption="ROC Curve - Model 1", use_column_width=True)
 
     # Download ROC Curve Image
