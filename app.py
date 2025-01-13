@@ -239,6 +239,15 @@ if st.session_state.current_page == "Home":
         """Normalize category names for URL redirection."""
         return name.replace(" ", "+").replace("_", "+").title()
 
+    # Function to safely add text to the PDF
+    def safe_add_text(pdf, text):
+        try:
+            pdf.cell(0, 10, text, ln=True)
+        except UnicodeEncodeError:
+            text = text.encode('latin-1', 'ignore').decode('latin-1')
+            pdf.cell(0, 10, text, ln=True)
+
+
     # Function to clean up the category name for button labels
     def clean_category_name(name):
         parts = name.split("_")
