@@ -101,6 +101,11 @@ else:
     st.session_state.current_page = selected_page
 
 
+if selected_special_page != st.session_state.current_page:
+    st.session_state.current_page = selected_page.title().replace(" ", "-")
+    st.experimental_set_query_params(page=st.session_state.current_page)
+
+
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page.title().replace(" ", "-")
     st.experimental_set_query_params(page=st.session_state.current_page)
