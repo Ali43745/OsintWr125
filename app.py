@@ -50,7 +50,10 @@ def load_data():
     data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18", case=False, na=False)]
     
     return data
-    
+
+
+
+
 data = load_data()
 
 # Resolve the directory path
