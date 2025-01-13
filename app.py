@@ -49,6 +49,8 @@ data = load_data()
 current_dir = Path(__file__).resolve().parent  # Use resolve() to get the absolute path
 os.chdir(current_dir)  # Change the current working directory
 
+
+
 # Load the .toml configuration
 try:
     pages_config = toml.load(current_dir / ".streamlit/pages.toml")
@@ -72,14 +74,11 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = [page["name"].replace("_", " ").title() for page in pages_config["pages"]]
-page_name_mapping = {page["name"].replace("_", " ").title(): page["name"] for page in pages_config["pages"]}
-
-selected_cleaned_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
-selected_page = page_name_mapping[selected_cleaned_page]
+page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
+selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page.title().replace(" ", "-")
+    st.session_state.current_page = selected_page.lower().replace(" ", "-")
     st.experimental_set_query_params(page=st.session_state.current_page)
 
 # Separate buttons for News Section and AI Prediction Visualizations
@@ -93,11 +92,9 @@ if st.sidebar.button("🔍 AI Prediction Visualizations"):
 
 # Render pages based on URL
 current_page = st.session_state.current_page
-# Main Content Rendering Based on Selected Page
 
 
-
-if st.session_state.current_page == "Home":
+if st.session_state.current_page == "home":
     # Dropdown for weapon types
    
     # Dashboard Page
