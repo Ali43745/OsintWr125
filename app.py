@@ -479,7 +479,7 @@ elif st.session_state.current_page == "ai-prediction":
         st.download_button(
             label="Download ROC Curve as PNG",
             data=img_file,
-            file_name="roc_curve_model1.png 
+            file_name="roc_curve_model1.png"
             mime="image/png"
         )
 
