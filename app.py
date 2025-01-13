@@ -78,13 +78,13 @@ page_names = ["home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page.lower().replace(" ", "-")
+    st.session_state.current_page = selected_page.title().replace(" ", "-")
     st.experimental_set_query_params(page=st.session_state.current_page)
 
 # Separate buttons for News Section and AI Prediction Visualizations
 if st.sidebar.button("📜 News Section"):
     st.session_state.current_page = "news-section"
-    st.experimental_set_query_params(page="news-section")
+    st.experimental_set_query_params(page="News-Section")
 
 if st.sidebar.button("🔍 AI Prediction Visualizations"):
     st.session_state.current_page = "ai-prediction"
@@ -467,7 +467,7 @@ elif st.session_state.current_page == "ai-prediction":
         )
 
 # News Section
-elif st.session_state.current_page == "news-section":
+elif st.session_state.current_page == "News-Section":
     st.write("### News Section")
     st.write(f"Debug: Current Page - {st.session_state.current_page}")  # Confirm correct page in debug logs
    
