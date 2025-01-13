@@ -70,7 +70,7 @@ if "current_page" not in st.session_state:
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
 page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] not in ["News Section", "AI Prediction Visualizations"]]  # Exclude News Section
-selected_page = st.sidebar.radio("Select Page", page_names, key="page_selector")
+selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page
@@ -85,7 +85,6 @@ if st.sidebar.button("📜 News Section"):
 # Add "News Section" as a separate button
 if st.sidebar.button("📜 AI Prediction Visualizations"):
     st.session_state.current_page = "AI Prediction Visualizations"
-    st.experimental_set_query_params(page="AI Prediction Visualizations")
 
 
 
@@ -399,26 +398,32 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
 elif st.session_state.current_page == "News Section":
     st.write("### News Section")
 
+    # Debugging log: current page
+    st.write(f"Debug: Current Page - {st.session_state.current_page}")
+
     # Prepare the data for the news
     news_data = data[[
         "Weapon_Name", "Type", "Weapon_Category", "Origin", "Development", "Caliber",
         "Length", "Barrel_Length", "Weight", "Width", "Height", "Action", "Complement",
         "Speed", "Downloaded_Image_Name"
     ]].fillna("Unknown").reset_index(drop=True)
-    
+
     total_news_items = len(news_data)
     IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
+
+    # Debugging log: Check if news data is loaded correctly
+    st.write(f"Debug: Total News Items - {total_news_items}")
 
     # State to keep track of the current news index
     if "news_index" not in st.session_state:
         st.session_state.news_index = 0
 
     # Functions to update the news index without reloading the page
-    def next_news():
-        st.session_state.news_index = (st.session_state.news_index + 1) % total_news_items
-
-    def prev_news():
-        st.session_state.news_index = (st.session_state.news_index - 1) % total_news_items
+    def update_news_index(offset):
+        new_index = (st.session_state.news_index + offset) % total_news_items
+        st.session_state.news_index = new_index
+        # Debugging log: Check the updated index
+        st.write(f"Debug: Updated News Index - {st.session_state.news_index}")
 
     # Function to generate PDF for a single news item
     def generate_single_news_pdf(news_item, image_path):
@@ -450,6 +455,9 @@ elif st.session_state.current_page == "News Section":
     # Display the current news item
     current_news = news_data.iloc[st.session_state.news_index]
 
+    # Debugging log: Displaying current news item
+    st.write(f"Debug: Displaying News for - {current_news['Weapon_Name']}")
+
     # Get the image for the current news item
     image_path = None
     if pd.notnull(current_news["Downloaded_Image_Name"]):
@@ -468,7 +476,7 @@ elif st.session_state.current_page == "News Section":
                 image_path = os.path.join(category_folder, matching_file)
 
     if not image_path or not os.path.exists(image_path):
-        image_path = placeholder_image_path
+        image_path = "placeholder_image_path_here.jpeg"  # Ensure this exists
 
     # Display the news image
     st.image(image_path, caption=f"Image for {current_news['Weapon_Name']}", use_container_width=True)
@@ -479,36 +487,34 @@ elif st.session_state.current_page == "News Section":
         if key != "Downloaded_Image_Name" and value != "Unknown":
             st.write(f"**{key.replace('_', ' ')}:** {value}")
 
-     # Navigation buttons for the news section
+    # Debugging: News navigation buttons with log messages
     col1, col2, col3 = st.columns([1, 1, 1])
 
-    # Check to ensure the navigation happens within the News Section page
-    if st.session_state.current_page == "News Section":
-        with col1:
-            if st.button("⬅️ Previous", key="prev_button"):
-                update_news_index(-1)  # Move to the previous news item
-                st.session_state.current_page = "News Section"  # Stay in the News Section
+    with col1:
+        if st.button("⬅️ Previous", key="prev_button"):
+            update_news_index(-1)
+            st.write("Debug: Previous Button Clicked")  # Log button click
 
-        with col3:
-            if st.button("➡️ Next", key="next_button"):
-                update_news_index(1)  # Move to the next news item
-                st.session_state.current_page = "News Section"  # Stay in the News Section
+    with col3:
+        if st.button("➡️ Next", key="next_button"):
+            update_news_index(1)
+            st.write("Debug: Next Button Clicked")  # Log button click
 
-        # Download news as PDF button
-        pdf_path = generate_single_news_pdf(current_news, image_path)
-        with col2:
-            st.download_button(
-                label="Download Current News as PDF",
-                data=open(pdf_path, "rb").read(),
-                file_name=os.path.basename(pdf_path),
-                mime="application/pdf",
-                key="news_pdf_download"
-            )
-        os.remove(pdf_path)  # Clean up temporary file
+    # Download news as PDF button
+    pdf_path = generate_single_news_pdf(current_news, image_path)
+    with col2:
+        if st.download_button(
+            label="Download Current News as PDF",
+            data=open(pdf_path, "rb").read(),
+            file_name=os.path.basename(pdf_path),
+            mime="application/pdf",
+            key="news_pdf_download"
+        ):
+            st.write("Debug: PDF Download Button Clicked")  # Log button click
+    os.remove(pdf_path)  # Clean up temporary file
 
-
-
-
+    # Final log to confirm the current section
+    st.write("Debug: End of News Section")
 
 
 
