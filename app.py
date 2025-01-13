@@ -403,7 +403,8 @@ elif st.session_state.current_page == "News Section":
     news_data = data[[
         "Weapon_Name", "Type", "Weapon_Category", "Origin", "Development", "Caliber",
         "Length", "Barrel_Length", "Weight", "Width", "Height", "Action", "Complement",
-        "Speed", "Downloaded_Image_Name"]].dropna().reset_index(drop=True)
+        "Speed", "Downloaded_Image_Name"
+    ]].fillna("Unknown").reset_index(drop=True)  # Fill NaN values with "Unknown"
     
     total_news_items = len(news_data)
     IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
@@ -438,9 +439,9 @@ elif st.session_state.current_page == "News Section":
 
         # Add the details
         pdf.set_font("Arial", size=12)
-        for key in news_item.index:
-            value = news_item[key]
-            pdf.cell(0, 10, f"{key.replace('_', ' ')}: {value}", ln=True)
+        for key, value in news_item.items():
+            if value != "Unknown":  # Skip "Unknown" values
+                pdf.cell(0, 10, f"{key.replace('_', ' ')}: {value}", ln=True)
 
         # Save the PDF
         pdf_output_path = f"{news_item['Weapon_Name'].replace(' ', '_')}_news.pdf"
@@ -479,11 +480,9 @@ elif st.session_state.current_page == "News Section":
 
     # Display the news details
     st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**.")
-    for key in [
-        "Weapon_Category", "Origin", "Caliber", "Length", "Barrel_Length", "Weight",
-        "Width", "Height", "Action", "Complement", "Speed", "text", "Downloaded_Image_Name"
-    ]:
-        st.write(f"**{key.replace('_', ' ')}:** {current_news[key]}")
+    for key, value in current_news.items():
+        if key != "Downloaded_Image_Name" and value != "Unknown":  # Skip image column and "Unknown" values
+            st.write(f"**{key.replace('_', ' ')}:** {value}")
 
     # Navigation buttons
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -496,18 +495,16 @@ elif st.session_state.current_page == "News Section":
 
     # Download news as PDF button (inside `col2` to avoid resetting)
     with col2:
-        if st.button("Download Current News as PDF"):
-            pdf_path = generate_single_news_pdf(current_news, image_path)
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="Download Current News",
-                    data=f,
-                    file_name=os.path.basename(pdf_path),
-                    mime="application/pdf",
-                    key="news_pdf_download"
-                )
-            os.remove(pdf_path)  # Clean up temporary file
-
+        pdf_path = generate_single_news_pdf(current_news, image_path)
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                label="Download Current News",
+                data=f,
+                file_name=os.path.basename(pdf_path),
+                mime="application/pdf",
+                key="news_pdf_download"
+            )
+        os.remove(pdf_path)  # Clean up temporary file
 
 else:
     import os
