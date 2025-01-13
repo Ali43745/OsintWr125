@@ -413,10 +413,12 @@ elif st.session_state.current_page == "News Section":
     if "news_index" not in st.session_state:
         st.session_state.news_index = 0
 
-    # Function to update the news index without page reset
-    def update_news_index(offset):
-        new_index = (st.session_state.news_index + offset) % total_news_items
-        st.session_state.news_index = new_index
+    # Functions to update the news index without reloading the page
+    def next_news():
+        st.session_state.news_index = (st.session_state.news_index + 1) % total_news_items
+
+    def prev_news():
+        st.session_state.news_index = (st.session_state.news_index - 1) % total_news_items
 
     # Function to generate PDF for a single news item
     def generate_single_news_pdf(news_item, image_path):
@@ -453,9 +455,9 @@ elif st.session_state.current_page == "News Section":
     if pd.notnull(current_news["Downloaded_Image_Name"]):
         image_name = current_news["Downloaded_Image_Name"]
         weapon_type = current_news["Type"].replace(" ", "_")
-
         category_folder = os.path.join(IMAGE_FOLDER, weapon_type)
 
+        # Normalize filenames for better matching
         def normalize_name(name):
             return name.lower().strip().replace("_", " ").replace(".jpg", "").replace(".jpeg", "")
 
@@ -468,39 +470,39 @@ elif st.session_state.current_page == "News Section":
     if not image_path or not os.path.exists(image_path):
         image_path = placeholder_image_path
 
+    # Display the news image
     st.image(image_path, caption=f"Image for {current_news['Weapon_Name']}", use_container_width=True)
     st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**.")
+    
+    # Display the news details (excluding "Unknown" values)
     for key, value in current_news.items():
         if key != "Downloaded_Image_Name" and value != "Unknown":
             st.write(f"**{key.replace('_', ' ')}:** {value}")
 
-     # Display the news description
-    st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**.")
-    for key, value in current_news.items():
-        if key != "Downloaded_Image_Name" and value != "Unknown":
-            st.write(f"**{key.replace('_', ' ')}:** {value}")
-
-
-    # Navigation buttons for the news
+    # Navigation buttons with `st.session_state` handling
     col1, col2, col3 = st.columns([1, 1, 1])
+    
     with col1:
-        if st.button("⬅️ Previous"):
+        if st.button("⬅️ Previous", key="prev_button"):
             prev_news()
+            st.experimental_rerun()  # Ensure update without resetting
+
     with col3:
-        if st.button("➡️ Next"):
+        if st.button("➡️ Next", key="next_button"):
             next_news()
-       # Button to download the current news item
+            st.experimental_rerun()  # Ensure update without resetting
+
+    # Download news as PDF button
+    pdf_path = generate_single_news_pdf(current_news, image_path)
     with col2:
-        if st.button("Download Current News as PDF"):
-            pdf_path = generate_single_news_pdf(current_news, image_path)
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="Download Current News",
-                    data=f,
-                    file_name=os.path.basename(pdf_path),
-                    mime="application/pdf"
-                )
-            os.remove(pdf_path)  # Clean up temporary file
+        st.download_button(
+            label="Download Current News as PDF",
+            data=open(pdf_path, "rb").read(),
+            file_name=os.path.basename(pdf_path),
+            mime="application/pdf",
+            key="news_pdf_download"
+        )
+    os.remove(pdf_path)  # Clean up temporary file
 
 else:
     import os
