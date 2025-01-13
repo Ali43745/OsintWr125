@@ -641,7 +641,7 @@ else:
 
         for image_path, details in images_with_details:
             pdf.add_page()
-
+ 
             # Add the image
             if os.path.exists(image_path):
                 pdf.image(image_path, x=10, y=10, w=100)
