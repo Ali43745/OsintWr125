@@ -584,9 +584,7 @@ elif st.session_state.current_page == "News-Section":
     os.remove(pdf_path)  # Clean up temporary file
 
     # Final log to confirm the current section
-    st.write("Debug: End of News Section")
-
-
+    
 
 
 else:
