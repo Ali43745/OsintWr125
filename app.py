@@ -68,7 +68,7 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] != "News Section"]  # Exclude News Section
+page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] not in ["News Section", "AI Prediction Visualizations"]]  # Exclude News Section
 selected_page = st.sidebar.selectbox("Go to", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
