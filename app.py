@@ -300,90 +300,85 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
         mime="text/csv",
     )
 
-    # 1. Bar Chart: Count of Actual vs Predicted Weapon Types
-    st.write("### Actual vs Predicted Weapon Types")
+   # Remove rows with "Unknown" values for visualizations
+    filtered_data = data.replace("Unknown", pd.NA).dropna()
+
+    # 1. Bar Chart: Top 5 Actual vs Predicted Weapon Types
+    st.write("### Top 5 Actual vs Predicted Weapon Types")
+    top_actual_types = filtered_data["Type"].value_counts().head(5).index
+    top_predicted_types = filtered_data["Predicted_Type_Label"].value_counts().head(5).index
+
+    filtered_data = filtered_data[
+        (filtered_data["Type"].isin(top_actual_types)) & (filtered_data["Predicted_Type_Label"].isin(top_predicted_types))
+    ]
+
     fig1, ax1 = plt.subplots(figsize=(10, 6))
     sns.countplot(
-        data=data.melt(id_vars=["Weapon_Name"], value_vars=["Type", "Predicted_Type_Label"]),
+        data=filtered_data.melt(id_vars=["Weapon_Name"], value_vars=["Type", "Predicted_Type_Label"]),
         x="value",
         hue="variable",
         ax=ax1,
         palette="Set2"
     )
-    ax1.set_title("Actual vs Predicted Weapon Types")
+    ax1.set_title("Top 5 Actual vs Predicted Weapon Types")
     ax1.set_xlabel("Weapon Type")
     ax1.set_ylabel("Count")
     st.pyplot(fig1)
 
-    # Download bar chart as PDF
-    def download_plot(fig, filename):
-        buf = BytesIO()
-        fig.savefig(buf, format="pdf")
-        buf.seek(0)
-        return buf
+    # 2. Accuracy Calculation and Pie Chart
+    correct_predictions = filtered_data[filtered_data["Type"] == filtered_data["Predicted_Type_Label"]]
+    accuracy = (len(correct_predictions) / len(filtered_data)) * 100
 
-    pdf_data1 = download_plot(fig1, "Actual_vs_Predicted_Types.pdf")
-    st.download_button("Download Bar Chart as PDF", pdf_data1, file_name="Actual_vs_Predicted_Types.pdf", mime="application/pdf")
-
-    # 2. Accuracy Calculation: Percentage of Correct Predictions
-    correct_predictions = data[data["Type"] == data["Predicted_Type_Label"]]
-    accuracy = (len(correct_predictions) / len(data)) * 100
     st.write(f"### Prediction Accuracy: {accuracy:.2f}%")
-    st.write(f"Total Predictions: {len(data)} | Correct Predictions: {len(correct_predictions)}")
+    st.write(f"Total Predictions: {len(filtered_data)} | Correct Predictions: {len(correct_predictions)}")
 
-    # 3. Pie Chart: Distribution of Prediction Outcomes (Correct vs Incorrect)
-    st.write("### Distribution of Prediction Outcomes")
+    # Pie Chart: Prediction Outcomes (Top 5 Categories)
+    st.write("### Top 5 Prediction Outcomes")
     outcome_data = pd.DataFrame({
         "Outcome": ["Correct", "Incorrect"],
-        "Count": [len(correct_predictions), len(data) - len(correct_predictions)]
+        "Count": [len(correct_predictions), len(filtered_data) - len(correct_predictions)]
     })
     fig2, ax2 = plt.subplots()
     ax2.pie(outcome_data["Count"], labels=outcome_data["Outcome"], autopct="%1.1f%%", startangle=90)
-    ax2.set_title("Prediction Outcomes")
+    ax2.set_title("Top 5 Prediction Outcomes")
     st.pyplot(fig2)
 
-    pdf_data2 = download_plot(fig2, "Prediction_Outcomes_Distribution.pdf")
-    st.download_button("Download Pie Chart as PDF", pdf_data2, file_name="Prediction_Outcomes_Distribution.pdf", mime="application/pdf")
+    # 3. Box Plot: Caliber vs. Prediction Correctness (Top 5 Calibers)
+    st.write("### Box Plot: Top 5 Calibers by Prediction Correctness")
+    top_calibers = filtered_data["Caliber"].value_counts().head(5).index
+    filtered_caliber_data = filtered_data[filtered_data["Caliber"].isin(top_calibers)]
+    filtered_caliber_data["Correct"] = filtered_caliber_data["Type"] == filtered_caliber_data["Predicted_Type_Label"]
 
-    # 4. Box Plot: Caliber vs. Accuracy of Predictions
-    st.write("### Box Plot: Caliber vs. Correctness of Predictions")
-    data["Correct"] = data["Type"] == data["Predicted_Type_Label"]
     fig3, ax3 = plt.subplots(figsize=(10, 6))
-    sns.boxplot(data=data, x="Correct", y="Caliber", ax=ax3, palette="muted")
-    ax3.set_title("Caliber vs. Prediction Accuracy")
+    sns.boxplot(data=filtered_caliber_data, x="Correct", y="Caliber", ax=ax3, palette="muted")
+    ax3.set_title("Top 5 Calibers by Prediction Accuracy")
     ax3.set_xlabel("Prediction Correctness")
     ax3.set_ylabel("Caliber (mm)")
     st.pyplot(fig3)
 
-    pdf_data3 = download_plot(fig3, "Caliber_vs_Prediction_Accuracy.pdf")
-    st.download_button("Download Box Plot as PDF", pdf_data3, file_name="Caliber_vs_Prediction_Accuracy.pdf", mime="application/pdf")
-
-    # 5. Heatmap: Correlation between Numeric Features and Prediction Accuracy
+    # 4. Heatmap: Correlation between Numeric Features and Prediction Accuracy (Top 5 Features)
     st.write("### Correlation Heatmap")
-    numeric_columns = data.select_dtypes(include=["float64", "int64"]).columns
-    correlation_data = data[numeric_columns].corr()
+    numeric_columns = filtered_data.select_dtypes(include=["float64", "int64"]).columns
+    correlation_data = filtered_data[numeric_columns].corr()
+
     fig4, ax4 = plt.subplots(figsize=(8, 6))
     sns.heatmap(correlation_data, annot=True, cmap="coolwarm", ax=ax4)
-    ax4.set_title("Correlation Heatmap of Numeric Features")
+    ax4.set_title("Correlation Heatmap of Numeric Features (Top 5 Features)")
     st.pyplot(fig4)
 
-    pdf_data4 = download_plot(fig4, "Correlation_Heatmap.pdf")
-    st.download_button("Download Heatmap as PDF", pdf_data4, file_name="Correlation_Heatmap.pdf", mime="application/pdf")
+    # 5. Scatter Plot: Top 5 Weight vs. Length by Prediction Correctness
+    st.write("### Scatter Plot: Top 5 Weight vs. Length by Prediction Correctness")
+    top_weights = filtered_data["Weight"].value_counts().head(5).index
+    filtered_scatter_data = filtered_data[filtered_data["Weight"].isin(top_weights)]
 
-    # 6. Scatter Plot: Weight vs. Length Colored by Prediction Correctness
-    st.write("### Scatter Plot: Weight vs. Length by Prediction Correctness")
     fig5, ax5 = plt.subplots(figsize=(10, 6))
-    sns.scatterplot(data=data, x="Length", y="Weight", hue="Correct", palette="deep", ax=ax5)
-    ax5.set_title("Weight vs. Length (Correct vs Incorrect Predictions)")
+    sns.scatterplot(data=filtered_scatter_data, x="Length", y="Weight", hue="Correct", palette="deep", ax=ax5)
+    ax5.set_title("Top 5 Weight vs. Length (Correct vs Incorrect Predictions)")
     ax5.set_xlabel("Length (mm)")
     ax5.set_ylabel("Weight (kg)")
     st.pyplot(fig5)
 
-    pdf_data5 = download_plot(fig5, "Scatter_Plot_Weight_vs_Length.pdf")
-    st.download_button("Download Scatter Plot as PDF", pdf_data5, file_name="Scatter_Plot_Weight_vs_Length.pdf", mime="application/pdf")
 
-
-    
 # News Section
 elif st.session_state.current_page == "News Section":
     st.write("### News Section")
