@@ -320,7 +320,7 @@ if st.session_state.current_page == "Home":
                                         try:
                                             pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
                                         except UnicodeEncodeError:
-                                            pdf.cell(0, 10, f"{key_cleaned}: {safe_value.encode('utf-8', 'ignore').decode('utf-8')}", ln=True)
+                                             st.warning(f"Skipped unsupported characters in {key_cleaned}")
 
                                 # Save the PDF
                                 pdf_file_path = f"{file_name.replace('_', ' ')}_details.pdf"
