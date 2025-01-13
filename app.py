@@ -62,6 +62,12 @@ if "pages" not in pages_config:
     st.stop()
 
 
+# Function to get current page from URL
+def get_current_page():
+    params = st.experimental_get_query_params()
+    return params.get("page", ["home"])[0]  # Default to "home"
+current_page = get_current_page()
+st.session_state.current_page = current_page
 
 # Handle Page Navigation
 if "current_page" not in st.session_state:
@@ -82,10 +88,10 @@ if st.sidebar.button("📜 Home"):
     st.session_state.current_page = "Home"
     
  
-# Add "News Section" as a separate button
 if st.sidebar.button("📜 News Section"):
-    st.session_state.current_page = "News Section"
- 
+    st.session_state.current_page = "news-section"
+    st.experimental_set_query_params(page="news-section")
+
 
 # Add "News Section" as a separate button
 if st.sidebar.button("📜 AI Prediction Visualizations"):
@@ -400,7 +406,7 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
         )
 
 # News Section
-elif st.session_state.current_page == "News Section":
+elif st.session_state.current_page == "news-section":
     st.write("### News Section")
 
     # Debugging log: current page
