@@ -84,10 +84,22 @@ def get_current_page():
 if "current_page" not in st.session_state:
     st.session_state.current_page = get_current_page()
 
-# Sidebar Navigation
+# Sidebar 1: Selectbox for general pages
 st.sidebar.markdown("### Navigation")
 page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+
+# Sidebar 2: Radio buttons for specific pages
+st.sidebar.markdown("### Special Sections")
+special_pages = ["News Section", "AI Prediction Visualizations"]
+selected_special_page = st.sidebar.radio("Go to:", special_pages, key="special_page_selector")
+
+# Update the current page based on selection
+if selected_special_page:
+    st.session_state.current_page = selected_special_page
+else:
+    st.session_state.current_page = selected_page
+
 
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page.title().replace(" ", "-")
