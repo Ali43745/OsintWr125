@@ -242,11 +242,12 @@ if st.session_state.current_page == "home":
         cleaned_name = " ".join(parts[1:]).title()
         return cleaned_name
 
-
     for row in rows:
         cols = st.columns(len(row))
         for col, category in zip(cols, row):
-            # Image logic remains the same
+            # Clean the category name by replacing "_" with " " and capitalizing words
+            cleaned_category_name = category.replace("_", " ").title()
+
             category_dir = os.path.join(IMAGE_FOLDER, category.replace(" ", "_"))
             images_in_category = []
 
@@ -258,7 +259,7 @@ if st.session_state.current_page == "home":
             # Display image or placeholder
             if images_in_category:
                 first_image = os.path.join(category_dir, images_in_category[0])
-                col.image(first_image, caption=category, use_container_width=True)
+                col.image(first_image, caption=cleaned_category_name, use_container_width=True)
                 with col:
                     with open(first_image, "rb") as file:
                         col.download_button(
@@ -268,9 +269,9 @@ if st.session_state.current_page == "home":
                             mime="image/png"
                         )
 
-                # Add navigation button to show details
-                if col.button(f"Details of {category}"):
-                    st.write(f"### Details of {category}")
+                # Add expander for details
+                with col.expander(f"Details of {cleaned_category_name} ⬇️", expanded=False):
+                    st.write(f"### Details of {cleaned_category_name}")
 
                     # Count the total number of images and unique Weapon Categories using the DataFrame
                     filtered_data = data[data["Type"] == category]  # Filter for the specific category
@@ -297,16 +298,18 @@ if st.session_state.current_page == "home":
                                 pdf.set_auto_page_break(auto=True, margin=15)
                                 pdf.add_page()
                                 pdf.set_font("Arial", size=12)
-                                pdf.cell(0, 10, f"Details of {file_name}", ln=True)
+                                pdf.cell(0, 10, f"Details of {file_name.replace('_', ' ')}", ln=True)
                                 pdf.ln(10)
 
                                 for key, value in details.items():
                                     if pd.notna(value):
+                                        # Clean any special characters
                                         safe_value = str(value).replace("’", "'").encode('latin-1', 'ignore').decode('latin-1')
-                                        pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
-                                
+                                        key_cleaned = key.replace("_", " ").title()  # Clean key names for better readability
+                                        pdf.cell(0, 10, f"{key_cleaned}: {safe_value}", ln=True)
+
                                 # Save the PDF
-                                pdf_file_path = f"{file_name}_details.pdf"
+                                pdf_file_path = f"{file_name.replace('_', ' ')}_details.pdf"
                                 pdf.output(pdf_file_path)
                                 zip_file.write(pdf_file_path, arcname=pdf_file_path)
                                 os.remove(pdf_file_path)  # Clean up temporary PDF files
@@ -315,18 +318,16 @@ if st.session_state.current_page == "home":
 
                     # Download button for ZIP file
                     st.download_button(
-                        label="Download All Images and Details as ZIP",
+                        label=f"Download All Images and Details of {cleaned_category_name} as ZIP",
                         data=combined_zip_buffer,
-                        file_name=f"{category}_images_and_details.zip",
+                        file_name=f"{cleaned_category_name.replace(' ', '_')}_images_and_details.zip",
                         mime="application/zip",
                     )
 
             elif os.path.exists(placeholder_image_path):
-                col.image(placeholder_image_path, caption=f"{category} (Placeholder)", use_container_width=True)
+                col.image(placeholder_image_path, caption=f"{cleaned_category_name} (Placeholder)", use_container_width=True)
             else:
-                col.error(f"No image available for {category}")
-
-
+                col.error(f"No image available for {cleaned_category_name}")
 
 #AI Prediction Visualizations
 elif st.session_state.current_page == "ai-prediction":
