@@ -475,10 +475,11 @@ elif st.session_state.current_page == "News Section":
             st.write(f"**{key.replace('_', ' ')}:** {value}")
 
      # Display the news description
-    st.write(
-        f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**, "
-        f"having a weight of **{current_news['Weight']}**. Its current status is **{current_news['Status']}**."
-    )
+    st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**.")
+    for key, value in current_news.items():
+        if key != "Downloaded_Image_Name" and value != "Unknown":
+            st.write(f"**{key.replace('_', ' ')}:** {value}")
+
 
     # Navigation buttons for the news
     col1, col2, col3 = st.columns([1, 1, 1])
