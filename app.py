@@ -94,7 +94,7 @@ current_page = st.session_state.current_page
 
 
 
-if st.session_state.current_page == "Home":
+if st.session_state.current_page == "home":
     # Dropdown for weapon types
 
    
