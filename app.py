@@ -47,7 +47,7 @@ def load_data():
     data['Origin'] = data['Origin'].str.title()
     
     # Exclude rows where "Origin" contains "7.5 cm Feldkanone 18 int."
-    data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18 Int.", case=False, na=False)]
+    data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18", case=False, na=False)]
     
     return data
     
