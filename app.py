@@ -366,6 +366,35 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
         mime="text/csv"
     )
 
+    
+    # 5. Display Confusion Matrix Image
+    st.write("### Confusion Matrix of Model 1")
+    confusion_matrix_path = "path/to/confusion_matrix_model1.png"  # Replace with actual file path
+    st.image(confusion_matrix_path, caption="Confusion Matrix - Model 1", use_column_width=True)
+
+    # Download Confusion Matrix Image
+    with open(confusion_matrix_path, "rb") as img_file:
+        st.download_button(
+            label="Download Confusion Matrix as PNG",
+            data=img_file,
+            file_name="confusion_matrix_model1.png",
+            mime="image/png"
+        )
+
+    # 6. Display ROC Curve Image
+    st.write("### ROC Curve of Model 1")
+    roc_curve_path = "path/to/roc_curve_model1.png"  # Replace with actual file path
+    st.image(roc_curve_path, caption="ROC Curve - Model 1", use_column_width=True)
+
+    # Download ROC Curve Image
+    with open(roc_curve_path, "rb") as img_file:
+        st.download_button(
+            label="Download ROC Curve as PNG",
+            data=img_file,
+            file_name="roc_curve_model1.png",
+            mime="image/png"
+        )
+
 # News Section
 elif st.session_state.current_page == "News Section":
     st.write("### News Section")
