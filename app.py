@@ -184,6 +184,7 @@ if st.session_state.current_page == "Home":
     )
 
     if not top_countries_data.empty:
+        filtered_data['Type'] = filtered_data['Type'].str.replace("_", " ")
         st.write("### Weapon Categories by Origin")
         weapon_origin_distribution = (
             filtered_data.groupby(["Origin", "Type"])
