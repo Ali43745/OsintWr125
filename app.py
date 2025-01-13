@@ -474,25 +474,32 @@ elif st.session_state.current_page == "News Section":
         if key != "Downloaded_Image_Name" and value != "Unknown":
             st.write(f"**{key.replace('_', ' ')}:** {value}")
 
+     # Display the news description
+    st.write(
+        f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**, "
+        f"having a weight of **{current_news['Weight']}**. Its current status is **{current_news['Status']}**."
+    )
+
+    # Navigation buttons for the news
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
-        if st.button("⬅️ Previous", key="prev_button"):
-            update_news_index(-1)
+        if st.button("⬅️ Previous"):
+            prev_news()
     with col3:
-        if st.button("➡️ Next", key="next_button"):
-            update_news_index(1)
-
-    # Download news as PDF button
-    pdf_path = generate_single_news_pdf(current_news, image_path)
-    with open(pdf_path, "rb") as f:
-        st.download_button(
-            label="Download Current News as PDF",
-            data=f,
-            file_name=os.path.basename(pdf_path),
-            mime="application/pdf",
-            key="news_pdf_download"
-        )
-    os.remove(pdf_path)
+        if st.button("➡️ Next"):
+            next_news()
+       # Button to download the current news item
+    with col2:
+        if st.button("Download Current News as PDF"):
+            pdf_path = generate_single_news_pdf(current_news, image_path)
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    label="Download Current News",
+                    data=f,
+                    file_name=os.path.basename(pdf_path),
+                    mime="application/pdf"
+                )
+            os.remove(pdf_path)  # Clean up temporary file
 
 else:
     import os
