@@ -1,4 +1,9 @@
 [[pages]]
+name = "Home"
+icon = "✈️"
+
+
+[[pages]]
 name = "Aircraft"
 icon = "✈️"
 
