@@ -158,7 +158,14 @@ icon = "🚀"
 name = "Vehicles"
 icon = "🔫"
 
-
 [[pages]]
 name = "News Section"
 icon = "🔫"
+
+
+[[pages]]
+name = "AI Prediction and Visualizations"
+icon = "🔫"
+
+
+
