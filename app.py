@@ -111,6 +111,8 @@ if st.session_state.current_page == "Home":
     # Threat Distribution by Origin
     st.write("### Threat Distribution by Origin")
     if not filtered_data.empty:
+        filtered_data['Type'] = filtered_data['Type'].str.replace("_", " ")
+
         fig = px.bar(
             filtered_data,
             x="Origin",
@@ -120,16 +122,7 @@ if st.session_state.current_page == "Home":
             labels={"Weapon_Name": "Weapon Name", "Origin": "Country of Origin"},
         )
         
-        # Customize Y-axis tick labels
-        fig.update_layout(
-            yaxis=dict(
-                tickmode="array",
-                tickvals=list(range(len(filtered_data["Weapon_Name"]))),
-                ticktext=filtered_data["Weapon_Name"]
-            )
-        )
-
-        # Display the chart
+       
         st.plotly_chart(fig)
 
     
