@@ -65,11 +65,11 @@ if "pages" not in pages_config:
 
 # Handle Page Navigation
 if "current_page" not in st.session_state:
-    st.session_state.current_page = "Home"
+    st.session_state.current_page = "News Section"
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] not in ["News Section", "AI Prediction Visualizations"]]  # Exclude News Section
+page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] not in ["Home", "News Section", "AI Prediction Visualizations"]]  # Exclude News Section
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
@@ -77,6 +77,11 @@ if selected_page != st.session_state.current_page:
     st.experimental_set_query_params(page=selected_page)
 
 
+# Add "News Section" as a separate button
+if st.sidebar.button("📜 Home"):
+    st.session_state.current_page = "Home"
+    
+ 
 # Add "News Section" as a separate button
 if st.sidebar.button("📜 News Section"):
     st.session_state.current_page = "News Section"
