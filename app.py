@@ -72,7 +72,7 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
+page_names =[page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
@@ -94,7 +94,7 @@ current_page = st.session_state.current_page
 
 
 
-if st.session_state.current_page == "home":
+if st.session_state.current_page == "Home":
     # Dropdown for weapon types
 
    
@@ -583,8 +583,21 @@ else:
     # Dynamically get the current page
     current_page = st.session_state.current_page
 
-    # Normalize current page name to match directory naming convention
+    # Normalize current page name for folder matching
     normalized_current_page = current_page.replace(" ", "_").lower()
+
+    # Cleaned display name (replace "_" with " " and title case)
+    display_name = current_page.replace("_", " ").title()
+
+    # Display the cleaned Page Title
+    st.title(f"{display_name}")
+
+    # Display the cleaned Category Heading
+    st.header(f"Category: {display_name}")
+
+    # Add description or further dynamic content
+    st.write(f"This is the dynamically created page for **{display_name}**.")
+
 
     # Display the Page Title
     st.title(f"{current_page}")
