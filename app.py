@@ -266,19 +266,15 @@ if st.session_state.current_page == "home":
                             file_name=os.path.basename(first_image),
                             mime="image/png"
                         )
+
                 # Add navigation button to show details
                 if col.button(f"Details of {category}"):
                     st.write(f"### Details of {category}")
 
-                    # Count the total number of images and unique Weapon_Categories
-                    query = f"""
-                    SELECT COUNT(*) AS total_images, COUNT(DISTINCT Weapon_Category) AS unique_categories
-                    FROM dbo_final_text1
-                    WHERE Type = '{category}'
-                    """
-                    details_result = pd.read_sql(query, engine).iloc[0]
-                    total_images = details_result['total_images']
-                    unique_categories = details_result['unique_categories']
+                    # Count the total number of images and unique Weapon Categories using the DataFrame
+                    filtered_data = data[data["Type"] == category]  # Filter for the specific category
+                    total_images = len(filtered_data)  # Count total number of images
+                    unique_categories = filtered_data["Weapon_Category"].nunique()  # Count unique weapon categories
 
                     st.write(f"**Total Weapons:** {total_images}")
                     st.write(f"**Unique Weapon Categories:** {unique_categories}")
@@ -290,15 +286,10 @@ if st.session_state.current_page == "home":
                             image_path = os.path.join(category_dir, file_name)
                             zip_file.write(image_path, arcname=file_name)
 
-                            # Fetch details for the image
-                            query_details = f"""
-                            SELECT *
-                            FROM dbo_final_text1
-                            WHERE Downloaded_Image_Name = '{file_name}'
-                            """
-                            details = pd.read_sql(query_details, engine).to_dict(orient="records")
-                            if details:
-                                details = details[0]
+                            # Fetch details for the image from the DataFrame
+                            image_details = filtered_data[filtered_data["Downloaded_Image_Name"] == file_name].to_dict(orient="records")
+                            if image_details:
+                                details = image_details[0]
 
                                 # Create a PDF with details for each image
                                 pdf = FPDF()
