@@ -211,6 +211,7 @@ if st.session_state.current_page == "Home":
    # 1. Weapon Production Over Time
     st.write("### Weapon Production Over Time")
     if not data.empty:
+        data['Type'] = data['Type'].str.replace("_", " ")
         fig = px.line(
             data,
             x="Development",
