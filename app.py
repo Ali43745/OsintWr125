@@ -218,7 +218,7 @@ if st.session_state.current_page == "Home":
             y="Weapon_Name",
             color="Type",
             title="Weapon Production Over Time",
-            labels={"Weapon_Name": "Number of Weapons", "Development": "Production Year Range"},
+            labels={"Weapon_Name": "Name of Weapons", "Development": "Production Year Range"},
         )
         st.plotly_chart(fig)
     else:
