@@ -311,7 +311,6 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
         palette="Set2"
     )
     ax1.set_title("Actual vs Predicted Weapon Types")
-    ax1.set_xlabel("Weapon Type")
     ax1.set_ylabel("Count")
     st.pyplot(fig1)
 
@@ -344,31 +343,28 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
 
     pdf_data2 = download_plot(fig2, "Prediction_Outcomes_Distribution.pdf")
     st.download_button("Download Pie Chart as PDF", pdf_data2, file_name="Prediction_Outcomes_Distribution.pdf", mime="application/pdf")
+    
+    # 4. Table of Recognized vs Unrecognized Types
+    st.write("### Model Prediction Performance by Weapon Type")
+    performance_table = data.groupby("Type").apply(
+        lambda x: pd.Series({
+            "Total Predictions": len(x),
+            "Correct Predictions": len(x[x["Type"] == x["Predicted_Type_Label"]]),
+            "Incorrect Predictions": len(x[x["Type"] != x["Predicted_Type_Label"]]),
+            "Accuracy (%)": 100 * len(x[x["Type"] == x["Predicted_Type_Label"]]) / len(x)
+        })
+    ).reset_index()
 
-    # 4. Box Plot: Caliber vs. Accuracy of Predictions
-    st.write("### Box Plot: Caliber vs. Correctness of Predictions")
-    data["Correct"] = data["Type"] == data["Predicted_Type_Label"]
-    fig3, ax3 = plt.subplots(figsize=(10, 6))
-    sns.boxplot(data=data, x="Correct", y="Caliber", ax=ax3, palette="muted")
-    ax3.set_title("Caliber vs. Prediction Accuracy")
-    ax3.set_xlabel("Prediction Correctness")
-    ax3.set_ylabel("Caliber (mm)")
-    st.pyplot(fig3)
+    st.dataframe(performance_table)
 
-    pdf_data3 = download_plot(fig3, "Caliber_vs_Prediction_Accuracy.pdf")
-    st.download_button("Download Box Plot as PDF", pdf_data3, file_name="Caliber_vs_Prediction_Accuracy.pdf", mime="application/pdf")
-
-    # 5. Heatmap: Correlation between Numeric Features and Prediction Accuracy
-    st.write("### Correlation Heatmap")
-    numeric_columns = data.select_dtypes(include=["float64", "int64"]).columns
-    correlation_data = data[numeric_columns].corr()
-    fig4, ax4 = plt.subplots(figsize=(8, 6))
-    sns.heatmap(correlation_data, annot=True, cmap="coolwarm", ax=ax4)
-    ax4.set_title("Correlation Heatmap of Numeric Features")
-    st.pyplot(fig4)
-
-    pdf_data4 = download_plot(fig4, "Correlation_Heatmap.pdf")
-    st.download_button("Download Heatmap as PDF", pdf_data4, file_name="Correlation_Heatmap.pdf", mime="application/pdf")
+    # Download Performance Table as CSV
+    performance_csv = performance_table.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Download Performance Table as CSV",
+        data=performance_csv,
+        file_name="Weapon_Type_Prediction_Performance.csv",
+        mime="text/csv"
+    )
 
 # News Section
 elif st.session_state.current_page == "News Section":
