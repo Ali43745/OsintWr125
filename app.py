@@ -63,15 +63,17 @@ if "pages" not in pages_config:
 
 
 # Function to get current page from URL
+# Function to get current page from URL
 def get_current_page():
     params = st.experimental_get_query_params()
     return params.get("page", ["home"])[0]  # Default to "home"
+
 current_page = get_current_page()
 st.session_state.current_page = current_page
 
 # Handle Page Navigation
 if "current_page" not in st.session_state:
-    st.session_state.current_page = "Home"
+    st.session_state.current_page = get_current_page()
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
@@ -408,10 +410,8 @@ elif st.session_state.current_page == "AI Prediction Visualizations":
 # News Section
 elif st.session_state.current_page == "news-section":
     st.write("### News Section")
-
-    # Debugging log: current page
-    st.write(f"Debug: Current Page - {st.session_state.current_page}")
-
+    st.write(f"Debug: Current Page - {st.session_state.current_page}")  # Confirm correct page in debug logs
+   
     # Prepare the data for the news
     news_data = data[[
         "Weapon_Name", "Type", "Weapon_Category", "Origin", "Development", "Caliber",
