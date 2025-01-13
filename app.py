@@ -416,12 +416,10 @@ elif st.session_state.current_page == "News Section":
     # Function to move to the next news item
     def next_news():
         st.session_state.news_index = (st.session_state.news_index + 1) % total_news_items
-        st.session_state.current_page = "News Section"
 
     # Function to move to the previous news item
     def prev_news():
         st.session_state.news_index = (st.session_state.news_index - 1) % total_news_items
-        st.session_state.current_page = "News Section"
 
     # Function to generate PDF for a single news item
     def generate_single_news_pdf(news_item, image_path):
@@ -486,27 +484,26 @@ elif st.session_state.current_page == "News Section":
         if key != "Downloaded_Image_Name" and value != "Unknown":
             st.write(f"**{key.replace('_', ' ')}:** {value}")
 
-    # Navigation buttons inside a form to avoid conflicts
-    with st.form(key="news_navigation"):
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col1:
-            if st.form_submit_button("⬅️ Previous"):
-                prev_news()
-        with col3:
-            if st.form_submit_button("➡️ Next"):
-                next_news()
-        with col2:
-            if st.form_submit_button("Download Current News as PDF"):
-                pdf_path = generate_single_news_pdf(current_news, image_path)
-                with open(pdf_path, "rb") as f:
-                    st.download_button(
-                        label="Download Current News",
-                        data=f,
-                        file_name=os.path.basename(pdf_path),
-                        mime="application/pdf",
-                        key="news_pdf_download"
-                    )
-                os.remove(pdf_path)  # Clean up temporary file
+    # Navigation buttons
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        if st.button("⬅️ Previous", key="prev_button"):
+            prev_news()
+    with col3:
+        if st.button("➡️ Next", key="next_button"):
+            next_news()
+
+    # Download news as PDF button (avoid reloading issue)
+    pdf_path = generate_single_news_pdf(current_news, image_path)
+    with open(pdf_path, "rb") as f:
+        st.download_button(
+            label="Download Current News as PDF",
+            data=f,
+            file_name=os.path.basename(pdf_path),
+            mime="application/pdf",
+            key="news_pdf_download"
+        )
+    os.remove(pdf_path)  # Clean up temporary file
 
 else:
     import os
