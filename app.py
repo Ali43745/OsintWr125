@@ -400,11 +400,15 @@ elif st.session_state.current_page == "News Section":
     st.write("### News Section")
 
     # Prepare the data for the news
-    news_data = data[["Weapon_Name", "Type","Development", "Downloaded_Image_Name"]].dropna().reset_index(drop=True)
+    news_data = data[[
+        "Weapon_Name", "Type", "Weapon_Category", "Origin", "Development", "Caliber",
+        "Length", "Barrel_Length", "Weight", "Width", "Height", "Action", "Complement",
+        "Speed", "text", "Predicted_Type", "Type_Numerical_Label", "Predicted_Type_Label"
+    ]].dropna().reset_index(drop=True)
+    
     total_news_items = len(news_data)
     IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
 
-    
     # State to keep track of the current news index
     if "news_index" not in st.session_state:
         st.session_state.news_index = 0
@@ -417,6 +421,7 @@ elif st.session_state.current_page == "News Section":
     def prev_news():
         st.session_state.news_index = (st.session_state.news_index - 1) % total_news_items
 
+    # Function to generate PDF for a single news item
     def generate_single_news_pdf(news_item, image_path):
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
@@ -434,11 +439,12 @@ elif st.session_state.current_page == "News Section":
 
         # Add the details
         pdf.set_font("Arial", size=12)
-        for key in ["Weapon_Name", "Type", "Development"]:
-            pdf.cell(0, 10, f"{key.replace('_', ' ')}: {news_item[key]}", ln=True)
+        for key in news_item.index:
+            value = news_item[key]
+            pdf.cell(0, 10, f"{key.replace('_', ' ')}: {value}", ln=True)
 
         # Save the PDF
-        pdf_output_path = f"{news_item['Weapon_Name']}_news.pdf"
+        pdf_output_path = f"{news_item['Weapon_Name'].replace(' ', '_')}_news.pdf"
         pdf.output(pdf_output_path)
         return pdf_output_path
 
@@ -449,10 +455,10 @@ elif st.session_state.current_page == "News Section":
     image_path = None
     if pd.notnull(current_news["Downloaded_Image_Name"]):
         image_name = current_news["Downloaded_Image_Name"]
-        Type = current_news["Type"].replace(" ", "_")
+        weapon_type = current_news["Type"].replace(" ", "_")
 
         # Construct the folder path
-        category_folder = os.path.join(IMAGE_FOLDER, Type)
+        category_folder = os.path.join(IMAGE_FOLDER, weapon_type)
 
         # Normalize filenames for better matching
         def normalize_name(name):
@@ -472,10 +478,14 @@ elif st.session_state.current_page == "News Section":
     # Display the news image
     st.image(image_path, caption=f"Image for {current_news['Weapon_Name']}", use_container_width=True)
 
-    # Display the news description
-    # Display the news description
-    st.write(
-        f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**")
+    # Display the news details
+    st.write(f"**Here is {current_news['Weapon_Name']}**, developed in **{current_news['Development']}**.")
+    for key in [
+        "Weapon_Category", "Origin", "Caliber", "Length", "Barrel_Length", "Weight",
+        "Width", "Height", "Action", "Complement", "Speed", "text", "Predicted_Type",
+        "Type_Numerical_Label", "Predicted_Type_Label"
+    ]:
+        st.write(f"**{key.replace('_', ' ')}:** {current_news[key]}")
 
     # Navigation buttons
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -485,6 +495,8 @@ elif st.session_state.current_page == "News Section":
     with col3:
         if st.button("➡️ Next"):
             next_news()
+
+    # Download news as PDF button (inside `col2` to avoid resetting)
     with col2:
         if st.button("Download Current News as PDF"):
             pdf_path = generate_single_news_pdf(current_news, image_path)
@@ -493,11 +505,12 @@ elif st.session_state.current_page == "News Section":
                     label="Download Current News",
                     data=f,
                     file_name=os.path.basename(pdf_path),
-                    mime="application/pdf"
+                    mime="application/pdf",
+                    key="news_pdf_download"
                 )
             os.remove(pdf_path)  # Clean up temporary file
-      
-   
+
+
 else:
     import os
     import pandas as pd
