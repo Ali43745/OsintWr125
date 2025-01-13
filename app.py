@@ -87,12 +87,7 @@ if "current_page" not in st.session_state:
 # Sidebar 1: Selectbox for general pages
 st.sidebar.markdown("### Navigation")
 page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
-selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
-
-# Sidebar 2: Radio buttons for specific pages
-st.sidebar.markdown("### Special Sections")
-special_pages = ["News Section", "AI Prediction Visualizations"]
-selected_special_page = st.sidebar.radio("Go to:", special_pages, key="special_page_selector")
+selected_page = st.sidebar.radio("Select Page", page_names, key="page_selector")
 
 # Update the current page based on selection
 if selected_special_page:
@@ -100,18 +95,12 @@ if selected_special_page:
 else:
     st.session_state.current_page = selected_page
 
-
-if selected_special_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page.title().replace(" ", "-")
-    st.experimental_set_query_params(page=st.session_state.current_page)
-
-
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page.title().replace(" ", "-")
     st.experimental_set_query_params(page=st.session_state.current_page)
 
 # Separate buttons for News Section and AI Prediction Visualizations
-if st.sidebar.radio("News Section"):
+if st.sidebar.button("📜News Section"):
     st.session_state.current_page = "News-Section"
     st.experimental_set_query_params(page="News-Section")
 
