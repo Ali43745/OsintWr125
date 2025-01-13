@@ -81,6 +81,13 @@ if st.sidebar.button("📜 News Section"):
     st.session_state.current_page = "News Section"
     st.experimental_set_query_params(page="News Section")
 
+# Add "News Section" as a separate button
+if st.sidebar.button("📜 AI Prediction Visualizations"):
+    st.session_state.current_page = "AI Prediction Visualizations"
+    st.experimental_set_query_params(page="AI Prediction Visualizations")
+
+
+
 # Main Content Rendering Based on Selected Page
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
