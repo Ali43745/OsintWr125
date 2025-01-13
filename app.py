@@ -74,7 +74,6 @@ selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_select
 
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page
-    st.experimental_set_query_params(page=selected_page)
 
 
 # Add "News Section" as a separate button
