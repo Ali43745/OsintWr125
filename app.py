@@ -242,6 +242,7 @@ if st.session_state.current_page == "home":
         cleaned_name = " ".join(parts[1:]).title()
         return cleaned_name
 
+
     for row in rows:
         cols = st.columns(len(row))
         for col, category in zip(cols, row):
@@ -301,7 +302,10 @@ if st.session_state.current_page == "home":
 
                                 for key, value in details.items():
                                     if pd.notna(value):
-                                        pdf.cell(0, 10, f"{key}: {value}", ln=True)
+                                        safe_value = str(value).replace("’", "'").encode('latin-1', 'ignore').decode('latin-1')
+                                        pdf.cell(0, 10, f"{key}: {safe_value}", ln=True)
+                                
+                                # Save the PDF
                                 pdf_file_path = f"{file_name}_details.pdf"
                                 pdf.output(pdf_file_path)
                                 zip_file.write(pdf_file_path, arcname=pdf_file_path)
