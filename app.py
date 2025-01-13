@@ -5,7 +5,7 @@ import plotly.express as px
 from sqlalchemy import create_engine
 import toml
 from fpdf import FPDF 
-from pathlib import Path
+from pathlib import Path 
 import os 
 import torch
 from sklearn.preprocessing import LabelEncoder
