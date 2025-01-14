@@ -95,21 +95,18 @@ selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_select
 special_page_option = st.sidebar.radio(
     "Special Pages",
     options=["Back to Selected Page", "News Section", "AI Prediction Visualizations"],
-    index=["Home", "News Section", "AI Prediction Visualizations"].index(
-        st.session_state.current_page.replace("_", " ")
-    )
-    if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"]
-    else 0,
+    index=["Back to Selected Page", "News Section", "AI Prediction Visualizations"].index(
+        st.session_state.current_page.replace("_", " ") if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"] else "Back to Selected Page"
+    ),
     key="radio_selector",
 )
 
 # Handle Page Navigation
-
 if special_page_option == "Back to Selected Page":
-    st.session_state.current_page = "Home"
-    st._set_query_params(page="Home")
+    if st.session_state.current_page != "Home":
+        st.session_state.current_page = "Home"
+        st._set_query_params(page="Home")
 
-# Handle Page Navigation
 if selected_page != st.session_state.current_page.replace("_", " "):
     st.session_state.current_page = selected_page.replace(" ", "_")
     st._set_query_params(page=st.session_state.current_page)
