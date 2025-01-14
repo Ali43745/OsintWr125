@@ -490,7 +490,7 @@ elif st.session_state.current_page == "ai-prediction":
         )
 
 # News Section
-elif st.session_state.current_page == "News-Section":
+elif st.session_state.current_page == "News Section":
     st.write("### News Section")
     st.write(f"Debug: Current Page - {st.session_state.current_page}")  # Confirm correct page in debug logs
    
