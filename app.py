@@ -60,7 +60,6 @@ data = load_data()
 current_dir = Path(__file__).resolve().parent  # Use resolve() to get the absolute path
 os.chdir(current_dir)  # Change the current working directory
 
-
 # Load the .toml configuration
 try:
     pages_config = toml.load(current_dir / ".streamlit/pages.toml")
@@ -82,6 +81,31 @@ def get_current_page():
 if "current_page" not in st.session_state:
     st.session_state.current_page = get_current_page()
 
+# Sidebar Navigation
+st.sidebar.markdown("### Navigation")
+
+# Display the radio buttons for special pages
+special_page_option = st.sidebar.radio(
+    "Special Pages",
+    options=["Home", "News Section", "AI Prediction Visualizations"],
+    index=["Home", "News_Section", "AI_Prediction_Visualizations"].index(st.session_state.current_page)
+    if st.session_state.current_page in ["Home", "News_Section", "AI_Prediction_Visualizations"] else 0,
+    key="radio_selector",
+)
+
+# Handle navigation for special pages
+if special_page_option == "Home" and st.session_state.current_page != "Home":
+    st.session_state.current_page = "Home"
+    st.experimental_set_query_params(page="Home")
+
+elif special_page_option == "News Section" and st.session_state.current_page != "News_Section":
+    st.session_state.current_page = "News_Section"
+    st.experimental_set_query_params(page="News_Section")
+
+elif special_page_option == "AI Prediction Visualizations" and st.session_state.current_page != "AI_Prediction_Visualizations":
+    st.session_state.current_page = "AI_Prediction_Visualizations"
+    st.experimental_set_query_params(page="AI_Prediction_Visualizations")
+
 # Filter out 'News Section' and 'AI Prediction Visualizations' from the selectbox
 page_names = [
     page["name"].replace("_", " ")
@@ -89,32 +113,15 @@ page_names = [
     if page["name"] not in ["News_Section", "AI_Prediction_Visualizations"]
 ]
 
-# Display the selectbox for regular pages (excluding News Section and AI Prediction Visualizations)
+# Display the selectbox for regular pages
 selected_page_cleaned = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 # Reverse map the cleaned names back to original page names for navigation
 page_name_mapping = {page["name"].replace("_", " "): page["name"] for page in pages_config["pages"]}
 selected_page = page_name_mapping[selected_page_cleaned]
 
-# Add a separate radio button for "News Section" and "AI Prediction Visualizations"
-special_page_option = st.sidebar.radio(
-    "Special Pages",
-    options=["None", "News Section", "AI Prediction Visualizations"],
-    index=0,  # Default option
-    key="radio_selector",
-)
-
-# Handle navigation for the special pages
-if special_page_option == "News Section" and st.session_state.current_page != "News_Section":
-    st.session_state.current_page = "News_Section"
-    st.experimental_set_query_params(page="News_Section")
-
-if special_page_option == "AI Prediction Visualizations" and st.session_state.current_page != "AI_Prediction_Visualizations":
-    st.session_state.current_page = "AI_Prediction_Visualizations"
-    st.experimental_set_query_params(page="AI_Prediction_Visualizations")
-
-# Handle navigation for regular pages in the selectbox
-if selected_page != st.session_state.current_page and special_page_option == "None":
+# Handle navigation for regular pages through the selectbox
+if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page
     st.experimental_set_query_params(page=selected_page)
 
@@ -128,7 +135,7 @@ if current_page == "News_Section":
 elif current_page == "AI_Prediction_Visualizations":
     st.write("### You are on the AI Prediction Visualizations page")
 else:
-    st.write(f"### You are on the {current_page} page")
+    st.write(f"### You are on the {current_page.replace('_', ' ')} page")
 
 
 if st.session_state.current_page == "Home":
