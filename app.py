@@ -98,13 +98,13 @@ selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_select
 # Add a separate radio button for "News Section" and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
     "Special Pages",
-    options=["None", "News Section", "AI Prediction Visualizations"],
+    options=["Home", "News Section", "AI Prediction Visualizations"],
     index=0,  # Default option
     key="radio_selector",
 )
 
 # Handle Page Navigation
-if selected_page != st.session_state.current_page and special_page_option == "None":
+if selected_page != st.session_state.current_page and special_page_option == "Home":
     st.session_state.current_page = selected_page
     st.experimental_set_query_params(page=selected_page)
 
