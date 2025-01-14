@@ -91,39 +91,40 @@ page_names = [
 # Display the selectbox for regular pages
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
+# Display the selectbox for regular pages
+selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+
 # Add a separate radio button for "Back to Selected Page", "News Section", and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
     "Special Pages",
     options=["Back to Selected Page", "News Section", "AI Prediction Visualizations"],
-    index=["Home", "News Section", "AI Prediction Visualizations"].index(
-        st.session_state.current_page.replace("_", " ") if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"] else "Back to Selected Page"
-    ),
+    index=0 if st.session_state.current_page not in ["Home", "News_Section", "AI_Prediction_Visualizations"] else
+          ["Back to Selected Page", "News Section", "AI Prediction Visualizations"].index(
+              "Back to Selected Page" if st.session_state.current_page == "Home" else st.session_state.current_page.replace("_", " ")
+          ),
     key="radio_selector",
 )
 
 # Handle Page Navigation
 if special_page_option == "Back to Selected Page":
-    if st.session_state.current_page != "Home":
-        st.session_state.current_page = "Home"
-        st._set_query_params(page="Home")
+    st.session_state.current_page = "Home"
+    st.experimental_set_query_params(page="Home")
 
 if selected_page != st.session_state.current_page.replace("_", " "):
     st.session_state.current_page = selected_page.replace(" ", "_")
-    st._set_query_params(page=st.session_state.current_page)
+    st.experimental_set_query_params(page=st.session_state.current_page)
 
 if special_page_option == "News Section" and st.session_state.current_page != "News_Section":
     st.session_state.current_page = "News_Section"
-    st._set_query_params(page="News_Section")
+    st.experimental_set_query_params(page="News_Section")
 
 if special_page_option == "AI Prediction Visualizations" and st.session_state.current_page != "AI_Prediction_Visualizations":
     st.session_state.current_page = "AI_Prediction_Visualizations"
-    st._set_query_params(page="AI_Prediction_Visualizations")
+    st.experimental_set_query_params(page="AI_Prediction_Visualizations")
 
 # Sync the current page with the URL for consistent behavior
 current_page = st.session_state.current_page
-st._set_query_params(page=current_page)
-
-
+st.experimental_set_query_params(page=current_page)
 
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
