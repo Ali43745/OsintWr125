@@ -125,8 +125,6 @@ if special_page_option == "AI Prediction Visualizations" and st.session_state.cu
 current_page = st.session_state.current_page
 st._set_query_params(page=current_page)
 
-# Render the current page
-st.write(f"### You are on the {current_page} page")
 
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
@@ -134,9 +132,8 @@ if st.session_state.current_page == "Home":
     # Dashboard Page
     st.title("Weapon Insights Dashboard")
     st.write("Explore weapon specifications, search, and visualize data interactively.")
+    
 
-    # Use a single column layout for filters
-     # Use a single column layout for filters
     with st.container():
         st.markdown("### Search Options")
 
@@ -188,14 +185,14 @@ if st.session_state.current_page == "Home":
 
     # Display filtered data
     st.write("### Filtered Data Table")
-    st.dataframe(data)
+    st.dataframe(filtered_data)
     
    # Filter the data to exclude origins starting with "source: "
-    filtered_data = data[~data['Origin'].str.startswith('Source:', na=False)].drop(columns=['Source'], errors='ignore')
+    filtered_data1 = data[~data['Origin'].str.startswith('Source:', na=False)].drop(columns=['Source'], errors='ignore')
 
     # Threat Distribution by Origin
     st.write("### Threat Distribution by Origin")
-    if not filtered_data.empty:
+    if not filtered_data1.empty:
         filtered_data['Type'] = filtered_data['Type'].str.replace("_", " ")
 
         fig = px.bar(
@@ -261,10 +258,10 @@ if st.session_state.current_page == "Home":
     )
 
     if not top_countries_data.empty:
-        filtered_data['Type'] = filtered_data['Type'].str.replace("_", " ")
+        filtered_data1['Type'] = filtered_data1['Type'].str.replace("_", " ")
         st.write("### Weapon Categories by Origin")
         weapon_origin_distribution = (
-            filtered_data.groupby(["Origin", "Type"])
+            filtered_data1.groupby(["Origin", "Type"])
             .size()
             .reset_index(name="Count")
         )
@@ -318,7 +315,7 @@ if st.session_state.current_page == "Home":
     st.write("### Weapon Categories")
     IMAGE_FOLDER = "normalized_images"
     placeholder_image_path = os.path.join(IMAGE_FOLDER, "placeholder.jpeg")
-    categories = sorted(data["Type"].dropna().unique())
+    categories = sorted(filtered_data["Type"].dropna().unique())
 
     cols_per_row = 3
     rows = [categories[i:i + cols_per_row] for i in range(0, len(categories), cols_per_row)]
