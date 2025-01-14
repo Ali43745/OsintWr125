@@ -80,16 +80,17 @@ def get_current_page():
     params = st.experimental_get_query_params()
     return params.get("page", ["Home"])[0]  # Default to "Home"
 
-# Handle Page Navigation
+# Initialize Page Navigation
 if "current_page" not in st.session_state:
     st.session_state.current_page = get_current_page()
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
+
 # Filter out 'News Section' from the selectbox
 page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] != "News_Section"]
 
-# Display the selectbox for all other pages except "News Section"
+# Display the selectbox for regular pages (excluding News Section)
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 # Add a separate radio button for "News Section"
@@ -100,33 +101,22 @@ news_section_option = st.sidebar.radio(
     key="radio_selector",
 )
 
-# Handle "News Section" navigation
+# Handle Page Navigation
+if selected_page != st.session_state.current_page and news_section_option == "None":
+    st.session_state.current_page = selected_page
+    st.experimental_set_query_params(page=selected_page)
+
 if news_section_option == "News Section":
     st.session_state.current_page = "News_Section"
     st.experimental_set_query_params(page="News_Section")
 
-
-if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page
-    st.experimental_set_query_params(page=selected_page)
-
-# Separate buttons for News Section and AI Prediction Visualizations
-if st.sidebar.button("📜 News Section"):
-    st.session_state.current_page = "News_Section"
-    st.experimental_set_query_params(page="News_Section")
-
-if st.sidebar.button("🔍 AI Prediction Visualizations"):
-    st.session_state.current_page = "AI Prediction Visualizations"
-    st.experimental_set_query_params(page="AI Prediction Visualizations")
-
-
-
-# Sync the current page with the URL (for consistent behavior across reloads and interactions)
+# Sync the current page with the URL for consistent behavior
 current_page = st.session_state.current_page
 st.experimental_set_query_params(page=current_page)
 
-# Render pages based on the current page
+# Render the current page
 st.write(f"### You are on the {current_page} page")
+
 
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
