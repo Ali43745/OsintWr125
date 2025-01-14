@@ -86,8 +86,25 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
+# Filter out 'News Section' from the selectbox
+page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] != "News_Section"]
+
+# Display the selectbox for all other pages except "News Section"
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+
+# Add a separate radio button for "News Section"
+news_section_option = st.sidebar.radio(
+    "Special Pages",
+    options=["None", "News Section"],
+    index=0,  # Default option
+    key="radio_selector",
+)
+
+# Handle "News Section" navigation
+if news_section_option == "News Section":
+    st.session_state.current_page = "News_Section"
+    st.experimental_set_query_params(page="News_Section")
+
 
 if selected_page != st.session_state.current_page:
     st.session_state.current_page = selected_page
