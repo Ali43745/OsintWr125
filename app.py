@@ -139,10 +139,13 @@ if st.session_state.current_page == "Home":
     weapon_types = sorted(data["Type"].dropna().unique())
     weapon_categories = sorted(data["Weapon_Category"].dropna().unique())
 
-    # Create three dependent filters
-    selected_image = st.selectbox("Select Weapon Name", options=["All"] + image_names, key="image_filter")
-    selected_type = st.selectbox("Select Weapon Type", options=["All"] + weapon_types, key="type_filter")
-    selected_category = st.selectbox("Select Weapon Category", options=["All"] + weapon_categories, key="category_filter")
+    # Use a single column layout for filters
+    with st.container():
+        st.markdown("### Filters")
+        # Create filters in a single column
+        selected_image = st.selectbox("Select Weapon Name", options=["All"] + image_names, key="image_filter")
+        selected_type = st.selectbox("Select Weapon Type", options=["All"] + weapon_types, key="type_filter")
+        selected_category = st.selectbox("Select Weapon Category", options=["All"] + weapon_categories, key="category_filter")
 
     # Apply filters to the data
     filtered_data = data.copy()
