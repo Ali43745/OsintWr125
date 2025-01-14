@@ -91,10 +91,10 @@ page_names = [
 # Display the selectbox for regular pages
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
-# Add a separate radio button for "Back to Home", "News Section", and "AI Prediction Visualizations"
+# Add a separate radio button for "Back to Selected Page", "News Section", and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
     "Special Pages",
-    options=["Back to Home", "News Section", "AI Prediction Visualizations"],
+    options=["Back to Selected Page", "News Section", "AI Prediction Visualizations"],
     index=["Home", "News Section", "AI Prediction Visualizations"].index(
         st.session_state.current_page.replace("_", " ")
     )
@@ -105,7 +105,7 @@ special_page_option = st.sidebar.radio(
 
 # Handle Page Navigation
 
-if special_page_option == "Back to Home":
+if special_page_option == "Back to Selected Page":
     st.session_state.current_page = "Home"
     st._set_query_params(page="Home")
 
