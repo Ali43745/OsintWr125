@@ -61,8 +61,6 @@ current_dir = Path(__file__).resolve().parent  # Use resolve() to get the absolu
 os.chdir(current_dir)  # Change the current working directory
 
 
-
-
 # Load the .toml configuration
 try:
     pages_config = toml.load(current_dir / ".streamlit/pages.toml")
@@ -75,7 +73,7 @@ if "pages" not in pages_config:
     st.error("'pages' key not found in the pages.toml file.")
     st.stop()
 
-# Function to get current page from URL
+# Function to get the current page from the URL
 def get_current_page():
     params = st.experimental_get_query_params()
     return params.get("page", ["Home"])[0]  # Default to "Home"
@@ -87,28 +85,36 @@ if "current_page" not in st.session_state:
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
 
-# Filter out 'News Section' from the selectbox
-page_names = ["Home"] + [page["name"] for page in pages_config["pages"] if page["name"] != "News_Section"]
+# Filter out 'News Section' and 'AI Prediction Visualizations' from the selectbox
+page_names = [
+    page["name"]
+    for page in pages_config["pages"]
+    if page["name"] not in ["News_Section", "AI Prediction Visualizations"]
+]
 
-# Display the selectbox for regular pages (excluding News Section)
+# Display the selectbox for regular pages (excluding News Section and AI Prediction Visualizations)
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
-# Add a separate radio button for "News Section"
-news_section_option = st.sidebar.radio(
+# Add a separate radio button for "News Section" and "AI Prediction Visualizations"
+special_page_option = st.sidebar.radio(
     "Special Pages",
-    options=["None", "News Section"],
+    options=["None", "News Section", "AI Prediction Visualizations"],
     index=0,  # Default option
     key="radio_selector",
 )
 
 # Handle Page Navigation
-if selected_page != st.session_state.current_page and news_section_option == "None":
+if selected_page != st.session_state.current_page and special_page_option == "None":
     st.session_state.current_page = selected_page
     st.experimental_set_query_params(page=selected_page)
 
-if news_section_option == "News Section":
+if special_page_option == "News Section":
     st.session_state.current_page = "News_Section"
     st.experimental_set_query_params(page="News_Section")
+
+if special_page_option == "AI Prediction Visualizations":
+    st.session_state.current_page = "AI_Prediction_Visualizations"
+    st.experimental_set_query_params(page="AI_Prediction_Visualizations")
 
 # Sync the current page with the URL for consistent behavior
 current_page = st.session_state.current_page
@@ -116,6 +122,7 @@ st.experimental_set_query_params(page=current_page)
 
 # Render the current page
 st.write(f"### You are on the {current_page} page")
+
 
 
 if st.session_state.current_page == "Home":
@@ -379,7 +386,7 @@ if st.session_state.current_page == "Home":
                 col.error(f"No image available for {cleaned_category_name}")
 
 # AI Prediction visualizations
-elif st.session_state.current_page == "ai-prediction":
+elif st.session_state.current_page == "AI_Prediction_Visualizations":
     st.write("### AI Prediction Analysis")
     # Load CSV file
     @st.cache_data
