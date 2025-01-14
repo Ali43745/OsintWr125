@@ -134,6 +134,26 @@ if st.session_state.current_page == "Home":
     st.title("Weapon Insights Dashboard")
     st.write("Explore weapon specifications, search, and visualize data interactively.")
 
+    # Define filter options based on data
+    image_names = sorted(data["Weapon_Name"].dropna().unique())
+    weapon_types = sorted(data["Type"].dropna().unique())
+    weapon_categories = sorted(data["Weapon_Category"].dropna().unique())
+
+    # Create three dependent filters
+    selected_image = st.selectbox("Select Weapon Name", options=["All"] + image_names, key="image_filter")
+    selected_type = st.selectbox("Select Weapon Type", options=["All"] + weapon_types, key="type_filter")
+    selected_category = st.selectbox("Select Weapon Category", options=["All"] + weapon_categories, key="category_filter")
+
+    # Apply filters to the data
+    filtered_data = data.copy()
+    if selected_image != "All":
+        filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
+    if selected_type != "All":
+        filtered_data = filtered_data[filtered_data["Type"] == selected_type]
+    if selected_category != "All":
+        filtered_data = filtered_data[filtered_data["Weapon_Category"] == selected_category]
+
+
     # Display filtered data
     st.write("### Filtered Data Table")
     st.dataframe(data)
