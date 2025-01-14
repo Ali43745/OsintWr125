@@ -88,8 +88,6 @@ page_names = [
     if page["name"] not in ["News_Section", "AI_Prediction_Visualizations"]
 ]
 
-# Display the selectbox for regular pages
-selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 # Display the selectbox for regular pages
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="unique_page_selector")
