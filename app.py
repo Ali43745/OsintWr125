@@ -102,6 +102,11 @@ if st.sidebar.button("🔍 AI Prediction Visualizations"):
     st.session_state.current_page = "AI Prediction Visualizations"
     st.experimental_set_query_params(page="AI Prediction Visualizations")
 
+# Handle the current page after decoding query parameters
+current_page = st.experimental_get_query_params().get("page", ["Home"])[0]
+current_page = current_page.replace("+", "_")  # Decode '+' to spaces if needed
+st.session_state.current_page = current_page
+
 # Sync the current page with the URL (for consistent behavior across reloads and interactions)
 current_page = st.session_state.current_page
 st.experimental_set_query_params(page=current_page)
