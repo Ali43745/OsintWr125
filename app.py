@@ -95,8 +95,8 @@ if selected_page != st.session_state.current_page:
 
 # Separate buttons for News Section and AI Prediction Visualizations
 if st.sidebar.button("📜 News Section"):
-    st.session_state.current_page = "News Section"
-    st.experimental_set_query_params(page="News Section")
+    st.session_state.current_page = "News_Section"
+    st.experimental_set_query_params(page="News_Section")
 
 if st.sidebar.button("🔍 AI Prediction Visualizations"):
     st.session_state.current_page = "AI Prediction Visualizations"
@@ -490,7 +490,7 @@ elif st.session_state.current_page == "ai-prediction":
         )
 
 # News Section
-elif st.session_state.current_page == "News+Section":
+elif st.session_state.current_page == "News_Section":
     st.write("### News Section")
     st.write(f"Debug: Current Page - {st.session_state.current_page}")  # Confirm correct page in debug logs
    
