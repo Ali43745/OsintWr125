@@ -84,16 +84,20 @@ if "current_page" not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.markdown("### Navigation")
-
 # Filter out 'News Section' and 'AI Prediction Visualizations' from the selectbox
 page_names = [
-    page["name"]
+    page["name"].replace("_", " ")
     for page in pages_config["pages"]
-    if page["name"] not in ["News_Section", "AI Prediction Visualizations"]
+    if page["name"] not in ["News_Section", "AI_Prediction_Visualizations"]
 ]
 
-# Display the selectbox for regular pages (excluding News Section and AI Prediction Visualizations)
-selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+# Display the selectbox for regular pages (with cleaned names)
+selected_page_cleaned = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+
+# Reverse map the cleaned names back to original page names for navigation
+page_name_mapping = {page["name"].replace("_", " "): page["name"] for page in pages_config["pages"]}
+selected_page = page_name_mapping[selected_page_cleaned]
+
 
 # Add a separate radio button for "News Section" and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
