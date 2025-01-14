@@ -92,17 +92,18 @@ page_names = [
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 # Display the selectbox for regular pages
-selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
+selected_page = st.sidebar.selectbox("Select Page", page_names, key="unique_page_selector")
 
 # Add a separate radio button for "Back to Selected Page", "News Section", and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
     "Special Pages",
     options=["Back to Selected Page", "News Section", "AI Prediction Visualizations"],
-    index=0 if st.session_state.current_page not in ["Home", "News_Section", "AI_Prediction_Visualizations"] else
-          ["Back to Selected Page", "News Section", "AI Prediction Visualizations"].index(
-              "Back to Selected Page" if st.session_state.current_page == "Home" else st.session_state.current_page.replace("_", " ")
-          ),
-    key="radio_selector",
+    index=["Back to Selected Page", "News Section", "AI Prediction Visualizations"].index(
+        "Back to Selected Page" if st.session_state.current_page == "Home" else st.session_state.current_page.replace("_", " ")
+    )
+    if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"]
+    else 0,
+    key="unique_radio_selector",
 )
 
 # Handle Page Navigation
@@ -125,6 +126,9 @@ if special_page_option == "AI Prediction Visualizations" and st.session_state.cu
 # Sync the current page with the URL for consistent behavior
 current_page = st.session_state.current_page
 st.experimental_set_query_params(page=current_page)
+
+# Render the current page
+st.write(f"### You are on the {current_page} page")
 
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
