@@ -123,8 +123,6 @@ if special_page_option == "AI Prediction Visualizations" and st.session_state.cu
 current_page = st.session_state.current_page
 st._set_query_params(page=current_page)
 
-# Render the current page
-st.write(f"### You are on the {current_page.replace('_', ' ')} page")
 
 
 if st.session_state.current_page == "Home":
