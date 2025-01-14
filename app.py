@@ -107,23 +107,23 @@ special_page_option = st.sidebar.radio(
 # Handle Page Navigation
 if special_page_option == "Back to Selected Page":
     st.session_state.current_page = "Home"
-    st.experimental_set_query_params(page="Home")
+    st._set_query_params(page="Home")
 
 if selected_page != st.session_state.current_page.replace("_", " "):
     st.session_state.current_page = selected_page.replace(" ", "_")
-    st.experimental_set_query_params(page=st.session_state.current_page)
+    st._set_query_params(page=st.session_state.current_page)
 
 if special_page_option == "News Section" and st.session_state.current_page != "News_Section":
     st.session_state.current_page = "News_Section"
-    st.experimental_set_query_params(page="News_Section")
+    st._set_query_params(page="News_Section")
 
 if special_page_option == "AI Prediction Visualizations" and st.session_state.current_page != "AI_Prediction_Visualizations":
     st.session_state.current_page = "AI_Prediction_Visualizations"
-    st.experimental_set_query_params(page="AI_Prediction_Visualizations")
+    st._set_query_params(page="AI_Prediction_Visualizations")
 
 # Sync the current page with the URL for consistent behavior
 current_page = st.session_state.current_page
-st.experimental_set_query_params(page=current_page)
+st._set_query_params(page=current_page)
 
 # Render the current page
 st.write(f"### You are on the {current_page} page")
@@ -135,28 +135,56 @@ if st.session_state.current_page == "Home":
     st.title("Weapon Insights Dashboard")
     st.write("Explore weapon specifications, search, and visualize data interactively.")
 
-    # Define filter options based on data
-    image_names = sorted(data["Weapon_Name"].dropna().unique())
-    weapon_types = sorted(data["Type"].dropna().unique())
-    weapon_categories = sorted(data["Weapon_Category"].dropna().unique())
-
     # Use a single column layout for filters
-    with st.container(): 
+     # Use a single column layout for filters
+    with st.container():
         st.markdown("### Search Options")
-        # Create filters in a single column
-        selected_image = st.selectbox("Select Weapon Name", options=["All"] + image_names, key="image_filter")
-        selected_type = st.selectbox("Select Weapon Type", options=["All"] + weapon_types, key="type_filter")
-        selected_category = st.selectbox("Select Weapon Category", options=["All"] + weapon_categories, key="category_filter")
 
-    # Apply filters to the data
-    filtered_data = data.copy()
-    if selected_image != "All":
-        filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
-    if selected_type != "All":
-        filtered_data = filtered_data[filtered_data["Type"] == selected_type]
-    if selected_category != "All":
-        filtered_data = filtered_data[filtered_data["Weapon_Category"] == selected_category]
+        # Extract unique values for Weapon Type, Weapon Category, and Weapon Name
+        weapon_types = data["Type"].dropna().unique()
+        weapon_categories = data["Weapon_Category"].dropna().unique()
+        image_names = data["Weapon_Name"].dropna().unique()
 
+        # Create interdependent filters
+        # 1. Select Weapon Type
+        selected_type = st.selectbox(
+            "Select Weapon Type", options=["All"] + sorted(weapon_types), key="type_filter"
+        )
+
+        # Filter categories based on the selected type
+        if selected_type != "All":
+            filtered_categories = data[data["Type"] == selected_type]["Weapon_Category"].dropna().unique()
+        else:
+            filtered_categories = weapon_categories
+
+        # 2. Select Weapon Category
+        selected_category = st.selectbox(
+            "Select Weapon Category", options=["All"] + sorted(filtered_categories), key="category_filter"
+        )
+
+        # Filter images based on the selected type and category
+        if selected_type != "All" and selected_category != "All":
+            filtered_images = data[(data["Type"] == selected_type) & (data["Weapon_Category"] == selected_category)]["Weapon_Name"].dropna().unique()
+        elif selected_type != "All":
+            filtered_images = data[data["Type"] == selected_type]["Weapon_Name"].dropna().unique()
+        elif selected_category != "All":
+            filtered_images = data[data["Weapon_Category"] == selected_category]["Weapon_Name"].dropna().unique()
+        else:
+            filtered_images = image_names
+
+        # 3. Select Weapon Name
+        selected_image = st.selectbox(
+            "Select Weapon Name", options=["All"] + sorted(filtered_images), key="image_filter"
+        )
+
+        # Apply filters to the data
+        filtered_data = data.copy()
+        if selected_type != "All":
+            filtered_data = filtered_data[filtered_data["Type"] == selected_type]
+        if selected_category != "All":
+            filtered_data = filtered_data[filtered_data["Weapon_Category"] == selected_category]
+        if selected_image != "All":
+            filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
 
     # Display filtered data
     st.write("### Filtered Data Table")
