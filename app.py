@@ -83,27 +83,30 @@ if "current_page" not in st.session_state:
 
 # Filter out 'News Section' and 'AI Prediction Visualizations' from the selectbox
 page_names = [
-    page["name"]
+    page["name"].replace("_", " ")  # Clean page names for display
     for page in pages_config["pages"]
-    if page["name"] not in ["News_Section", "AI Prediction Visualizations"]
+    if page["name"] not in ["News_Section", "AI_Prediction_Visualizations"]
 ]
 
-# Display the selectbox for regular pages (excluding News Section and AI Prediction Visualizations)
+# Display the selectbox for regular pages
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
-# Add a separate radio button for "News Section" and "AI Prediction Visualizations"
+# Add a separate radio button for "Home", "News Section", and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
     "Special Pages",
     options=["Home", "News Section", "AI Prediction Visualizations"],
-    index=["Home", "News Section", "AI Prediction Visualizations"].index(st.session_state.current_page)
-    if st.session_state.current_page in ["Home", "News_Section", "AI_Prediction_Visualizations"] else 0,
+    index=["Home", "News Section", "AI Prediction Visualizations"].index(
+        st.session_state.current_page.replace("_", " ")
+    )
+    if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"]
+    else 0,
     key="radio_selector",
 )
 
 # Handle Page Navigation
-if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page
-    st.experimental_set_query_params(page=selected_page)
+if selected_page != st.session_state.current_page.replace("_", " "):
+    st.session_state.current_page = selected_page.replace(" ", "_")
+    st.experimental_set_query_params(page=st.session_state.current_page)
 
 if special_page_option == "News Section" and st.session_state.current_page != "News_Section":
     st.session_state.current_page = "News_Section"
@@ -118,8 +121,7 @@ current_page = st.session_state.current_page
 st.experimental_set_query_params(page=current_page)
 
 # Render the current page
-st.write(f"### You are on the {current_page} page")
-
+st.write(f"### You are on the {current_page.replace('_', ' ')} page")
 
 
 if st.session_state.current_page == "Home":
