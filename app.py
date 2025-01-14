@@ -74,7 +74,7 @@ if "pages" not in pages_config:
 
 # Function to get the current page from the URL
 def get_current_page():
-    params = st.experimental_get_query_params()
+    params = st._get_query_params()
     return params.get("page", ["Home"])[0]  # Default to "Home"
 
 # Initialize Page Navigation
@@ -91,34 +91,35 @@ page_names = [
 # Display the selectbox for regular pages
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
-# Add a separate radio button for "Home", "News Section", and "AI Prediction Visualizations"
+# Add a separate radio button for "Back to Home", "News Section", and "AI Prediction Visualizations"
 special_page_option = st.sidebar.radio(
     "Special Pages",
-    options=["Home", "News Section", "AI Prediction Visualizations"],
-    index=["Home", "News Section", "AI Prediction Visualizations"].index(
-        st.session_state.current_page.replace("_", " ")
+    options=["Back to Home", "News Section", "AI Prediction Visualizations"],
+    index=["Back to Home", "News Section", "AI Prediction Visualizations"].index(
+        "Back to Home" if st.session_state.current_page == "Home" else st.session_state.current_page.replace("_", " ")
     )
     if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"]
     else 0,
     key="radio_selector",
 )
 
+
 # Handle Page Navigation
 if selected_page != st.session_state.current_page.replace("_", " "):
     st.session_state.current_page = selected_page.replace(" ", "_")
-    st.experimental_set_query_params(page=st.session_state.current_page)
+    st._set_query_params(page=st.session_state.current_page)
 
 if special_page_option == "News Section" and st.session_state.current_page != "News_Section":
     st.session_state.current_page = "News_Section"
-    st.experimental_set_query_params(page="News_Section")
+    st._set_query_params(page="News_Section")
 
 if special_page_option == "AI Prediction Visualizations" and st.session_state.current_page != "AI_Prediction_Visualizations":
     st.session_state.current_page = "AI_Prediction_Visualizations"
-    st.experimental_set_query_params(page="AI_Prediction_Visualizations")
+    st._set_query_params(page="AI_Prediction_Visualizations")
 
 # Sync the current page with the URL for consistent behavior
 current_page = st.session_state.current_page
-st.experimental_set_query_params(page=current_page)
+st._set_query_params(page=current_page)
 
 # Render the current page
 st.write(f"### You are on the {current_page.replace('_', ' ')} page")
