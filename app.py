@@ -77,8 +77,8 @@ if "pages" not in pages_config:
 
 # Function to get current page from URL
 def get_current_page():
-    params = st._get_query_params()
-    return params.get("page", ["home"])[0]  # Default to "home"
+    params = st.experimental_get_query_params()
+    return params.get("page", ["Home"])[0]  # Default to "Home"
 
 # Handle Page Navigation
 if "current_page" not in st.session_state:
@@ -90,21 +90,24 @@ page_names = ["Home"] + [page["name"] for page in pages_config["pages"]]
 selected_page = st.sidebar.selectbox("Select Page", page_names, key="page_selector")
 
 if selected_page != st.session_state.current_page:
-    st.session_state.current_page = selected_page.title().replace(" ", "-")
-    st._set_query_params(page=st.session_state.current_page)
+    st.session_state.current_page = selected_page
+    st.experimental_set_query_params(page=selected_page)
 
 # Separate buttons for News Section and AI Prediction Visualizations
 if st.sidebar.button("📜 News Section"):
-    st.session_state.current_page = "News-Section"
-    st._set_query_params(page="News-Section")
+    st.session_state.current_page = "News Section"
+    st.experimental_set_query_params(page="News Section")
 
 if st.sidebar.button("🔍 AI Prediction Visualizations"):
-    st.session_state.current_page = "ai-prediction"
-    st._set_query_params(page="ai-prediction")
+    st.session_state.current_page = "AI Prediction Visualizations"
+    st.experimental_set_query_params(page="AI Prediction Visualizations")
 
-# Render pages based on URL
+# Sync the current page with the URL (for consistent behavior across reloads and interactions)
 current_page = st.session_state.current_page
+st.experimental_set_query_params(page=current_page)
 
+# Render pages based on the current page
+st.write(f"### You are on the {current_page} page")
 
 if st.session_state.current_page == "Home":
     # Dropdown for weapon types
