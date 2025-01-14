@@ -96,7 +96,7 @@ special_page_option = st.sidebar.radio(
     "Special Pages",
     options=["Back to Home", "News Section", "AI Prediction Visualizations"],
     index=["Back to Home", "News Section", "AI Prediction Visualizations"].index(
-        "Back to Home" if st.session_state.current_page == "Home" else st.session_state.current_page.replace("_", " ")
+        st.session_state.current_page.replace("_", " ")
     )
     if st.session_state.current_page.replace("_", " ") in ["Home", "News Section", "AI Prediction Visualizations"]
     else 0,
