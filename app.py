@@ -102,7 +102,10 @@ special_page_option = st.sidebar.radio(
     else 0,
     key="radio_selector",
 )
-
+# Handle Page Navigation
+if special_page_option == "Back to Home":
+    st.session_state.current_page = "Home"
+    st._set_query_params(page="Home")
 
 # Handle Page Navigation
 if selected_page != st.session_state.current_page.replace("_", " "):
