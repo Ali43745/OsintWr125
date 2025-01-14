@@ -140,7 +140,7 @@ if st.session_state.current_page == "Home":
     weapon_categories = sorted(data["Weapon_Category"].dropna().unique())
 
     # Use a single column layout for filters
-    with st.container():
+    with st.container(): 
         st.markdown("### Filters")
         # Create filters in a single column
         selected_image = st.selectbox("Select Weapon Name", options=["All"] + image_names, key="image_filter")
