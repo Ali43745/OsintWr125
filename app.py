@@ -936,8 +936,12 @@ else:
                             st.image(placeholder_image_path, caption="Image Not Available", use_container_width=True)
 
                         # Display the normalized file name
+                        # Extract weapon name from details
+                        weapon_name = details.get("Weapon Name", "Unknown Weapon")  # Fallback if missing
+
+                        # Display the Weapon Name in the green text box
                         st.markdown(
-                            f"<div style='text-align: center; font-size: 14px; background-color: #28a745; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{normalized_file_name}</div>",
+                            f"<div style='text-align: center; font-size: 14px; background-color: #28a745; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'>{weapon_name}</div>",
                             unsafe_allow_html=True,
                         )
 
