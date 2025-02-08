@@ -64,12 +64,24 @@ if engine is None:
     st.error("❌ Failed to connect to the database.")
     st.stop()
 
-# ✅ Load Data from dbo_final_text1
 @st.cache_data
 def load_data():
-    query = "SELECT Weapon_Name FROM dbo_final_text1 LIMIT 5;"  # Fetch fewer rows
+    query = """
+    SELECT Weapon_Name, Source, Type, Weapon_Category, Origin, Development, 
+           Caliber, Length, Barrel_Length, Weight, Width, Height, Action, 
+           Complement, Speed, Downloaded_Image_Name 
+    FROM dbo_final_text1
+    LIMIT 11448;
+    """
     try:
         data = pd.read_sql(query, engine)
+        
+        # Ensure all "Origin" entries are in title format
+        data['Origin'] = data['Origin'].str.title()
+        
+        # Exclude rows where "Origin" contains "7.5 Cm Feldkanone 18 int."
+        data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18", case=False, na=False)]
+        
         return data
     except Exception as e:
         st.error(f"❌ Failed to fetch data: {e}")
