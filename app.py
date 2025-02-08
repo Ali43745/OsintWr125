@@ -189,6 +189,8 @@ if st.session_state.current_page == "Home":
     weapon_types = data["Type"].dropna().unique()
     weapon_categories = data["Weapon_Category"].dropna().unique()
     image_names = data["Weapon_Name"].dropna().unique()
+    IMAGE_FOLDER = "normalized_images"
+
 
     # Use columns for better structure
     col1, col2 = st.columns([3, 1])  # Larger column for search, smaller for filters
@@ -231,6 +233,13 @@ if st.session_state.current_page == "Home":
         filtered_data = filtered_data[filtered_data["Weapon_Category"] == selected_category]
     if selected_image != "All":
         filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
+
+        # **Display Weapon Image (if found)**
+        image_path = os.path.join(IMAGE_FOLDER, f"{selected_image}.jpg")  # Assuming images are stored as .jpg
+        if os.path.exists(image_path):
+            st.image(image_path, caption=f"Weapon: {selected_image}", use_column_width=True)
+        else:
+            st.warning("⚠️ No image found for this weapon.")
 
     # Display filtered data
     st.write("### Filtered Data Table")
