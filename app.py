@@ -79,7 +79,21 @@ def load_data():
         
         # Exclude rows where "Origin" contains "7.5 Cm Feldkanone 18 int."
         data = data[~data['Origin'].str.contains("7.5 Cm Feldkanone 18", case=False, na=False)]
+
+        # Function to clean weapon names
+        def clean_weapon_name(name, idx):
+            # Remove leading numbers and spaces
+            new_name = re.sub(r'^\d+\s+', '', name).strip()
+            
+            # If name is entirely numeric after cleaning, assign a generic name
+            if new_name.isdigit() or new_name == "":
+                new_name = f"Weapon{idx + 1}"
+            
+            return new_name
         
+        # Apply the cleaning function
+        data['Weapon_Name'] = [clean_weapon_name(name, idx) for idx, name in enumerate(data['Weapon_Name'])]
+
         return data
     except Exception as e:
         st.error(f"❌ Failed to fetch data: {e}")
@@ -87,9 +101,6 @@ def load_data():
 
 # ✅ Fetch Data
 data = load_data()
-
-
-
 # Resolve the directory path
 current_dir = Path(__file__).resolve().parent  # Use resolve() to get the absolute path
 os.chdir(current_dir)  # Change the current working directory
