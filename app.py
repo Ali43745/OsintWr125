@@ -6,6 +6,7 @@ import pymysql  # ✅ Required for MySQL connection
 from fpdf import FPDF  
 from pathlib import Path 
 import torch
+import toml
 from sklearn.preprocessing import LabelEncoder
 import requests
 import os
