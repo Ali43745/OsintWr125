@@ -681,8 +681,8 @@ elif st.session_state.current_page == "News_Section":
 
         # Add the image
         if image_path and os.path.exists(image_path):
-            pdf.image(image_path, x=10, y=pdf.get_y(), w=100)
-            pdf.ln(50)
+            pdf.image(image_path, x=10, y=pdf.get_y(), w=170)
+            pdf.ln(100)
 
         # Add the details (skip "Unknown" values)
         pdf.set_font("Arial", size=12)
