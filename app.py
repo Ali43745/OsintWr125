@@ -27,22 +27,21 @@ DB_PORT = "3306"
 @st.cache_resource
 def get_engine():
     try:
-        # Explicitly tell pymysql to install as MySQLdb
         pymysql.install_as_MySQLdb()
-        
-        # Correct MySQL connection URL with increased timeout (60 seconds)
+
+        # Increase timeout and max retries
         engine = create_engine(
-            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?connect_timeout=60",
-            pool_recycle=3600, 
+            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?"
+            f"connect_timeout=180&read_timeout=180&write_timeout=180",
+            pool_recycle=3600,
             pool_pre_ping=True
         )
-        
+
         st.success("Database connected successfully!")
         return engine
     except Exception as e:
         st.error(f"Database connection failed: {e}")
         return None
-
 
 # ✅ Establish the connection
 engine = get_engine()
@@ -55,8 +54,9 @@ else:
 
 # Load data from dbo_final_text1
 @st.cache_data
+@st.cache_data
 def load_data():
-    query = "SELECT * FROM dbo_final_text1 LIMIT 10;"  # ⬅️ Fetch only 10 rows first
+    query = "SELECT Weapon_Name FROM dbo_final_text1 LIMIT 5;"  # Fetch fewer rows
     try:
         data = pd.read_sql(query, engine)
         return data
