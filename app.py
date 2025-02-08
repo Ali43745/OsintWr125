@@ -19,20 +19,30 @@ from io import BytesIO
 
 
 
-# Database connection details (Google Cloud SQL)
-DB_HOST = "34.174.135.218"  # Your Google Cloud SQL Public IP
-DB_USER = "root"  # Your MySQL user
-DB_PASSWORD = "osintwr12"  # Your MySQL root password
-DB_NAME = "StreamlitWeaponData"  # Your database name
-DB_PORT = "3306"  # MySQL default port
+DB_HOST = "34.174.135.218"
+DB_USER = "root"
+DB_PASSWORD = "osintwr12"
+DB_NAME = "StreamlitWeaponData"
+DB_PORT = "3306"
 
-# Define the database connection
 @st.cache_resource
 def get_engine():
-    engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
-    return engine
+    try:
+        # Explicitly tell pymysql to install as MySQLdb
+        pymysql.install_as_MySQLdb()
+        
+        # Correct MySQL connection URL
+        engine = create_engine(
+            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
+            pool_recycle=3600, pool_pre_ping=True
+        )
+        return engine
+    except Exception as e:
+        st.error(f"Database connection failed: {e}")
+        return None
 
 engine = get_engine()
+
 
 # Load data from dbo_final_text1
 @st.cache_data
