@@ -49,8 +49,6 @@ def get_engine():
         #     pool_recycle=3600,
         #     pool_pre_ping=True
         # )
-
-        st.success("✅ Database connected successfully!")
         return engine
     except Exception as e:
         st.error(f"❌ Database connection failed: {e}")
@@ -89,14 +87,6 @@ def load_data():
 
 # ✅ Fetch Data
 data = load_data()
-
-# ✅ Display Data
-if not data.empty:
-    st.write("### 🔥 Sample Data from Database")
-    st.dataframe(data)
-else:
-    st.warning("⚠️ No data fetched. Check database connectivity.")
-
 
 
 
