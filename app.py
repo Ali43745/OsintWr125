@@ -196,10 +196,10 @@ if st.session_state.current_page == "Home":
     with col1:
         st.markdown("### Search for a Weapon")
 
-        # Single input field with a dropdown effect
+        # Single input field with a dropdown effect and default placeholder
         selected_image = st.selectbox(
             "Search or Select a Weapon",
-            options=[""] + image_names,  # Empty string as default for typing
+            options=["Choose an option"] + image_names,  # Default option at the top
             key="image_filter"
         )
 
