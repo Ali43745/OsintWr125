@@ -82,6 +82,10 @@ def load_data():
 
         # Function to clean weapon names
         def clean_weapon_name(name, idx):
+            # Check if "cm" is present in the name
+            if re.search(r'\d+\s*cm', name, re.IGNORECASE):
+                return name  # Keep the name unchanged if "cm" is found
+            
             # Remove leading numbers and spaces
             new_name = re.sub(r'^\d+\s+', '', name).strip()
             
@@ -98,6 +102,9 @@ def load_data():
     except Exception as e:
         st.error(f"❌ Failed to fetch data: {e}")
         return pd.DataFrame()
+
+# ✅ Fetch Data
+data = load_data()
 
 # ✅ Fetch Data
 data = load_data()
