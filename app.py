@@ -27,18 +27,22 @@ DB_PORT = "3306"
 @st.cache_resource
 def get_engine():
     try:
-        # ✅ Ensure pymysql is installed as MySQLdb
+        # Explicitly tell pymysql to install as MySQLdb
         pymysql.install_as_MySQLdb()
         
-        # ✅ Correct MySQL connection URL
+        # Correct MySQL connection URL with increased timeout (60 seconds)
         engine = create_engine(
-            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
-            pool_recycle=3600, pool_pre_ping=True
+            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?connect_timeout=60",
+            pool_recycle=3600, 
+            pool_pre_ping=True
         )
+        
+        st.success("Database connected successfully!")
         return engine
     except Exception as e:
         st.error(f"Database connection failed: {e}")
         return None
+
 
 # ✅ Establish the connection
 engine = get_engine()
