@@ -3,10 +3,9 @@ import pandas as pd
 import os
 import plotly.express as px
 from sqlalchemy import create_engine
-import toml 
+import pymysql  # ✅ Import pymysql
 from fpdf import FPDF  
 from pathlib import Path 
-import os 
 import torch
 from sklearn.preprocessing import LabelEncoder
 import requests
@@ -17,21 +16,21 @@ import seaborn as sns
 import numpy as np
 from io import BytesIO
 
-
-
+# ✅ Database connection details
 DB_HOST = "34.174.135.218"
 DB_USER = "root"
 DB_PASSWORD = "osintwr12"
 DB_NAME = "StreamlitWeaponData"
 DB_PORT = "3306"
 
+# ✅ Define the database connection
 @st.cache_resource
 def get_engine():
     try:
-        # Explicitly tell pymysql to install as MySQLdb
+        # ✅ Ensure pymysql is installed as MySQLdb
         pymysql.install_as_MySQLdb()
         
-        # Correct MySQL connection URL
+        # ✅ Correct MySQL connection URL
         engine = create_engine(
             f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
             pool_recycle=3600, pool_pre_ping=True
@@ -41,8 +40,14 @@ def get_engine():
         st.error(f"Database connection failed: {e}")
         return None
 
+# ✅ Establish the connection
 engine = get_engine()
 
+# ✅ Ensure connection is established before proceeding
+if engine is not None:
+    st.success("Database connected successfully!")
+else:
+    st.error("Failed to connect to the database.")
 
 # Load data from dbo_final_text1
 @st.cache_data
