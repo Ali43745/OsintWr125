@@ -193,7 +193,7 @@ if st.session_state.current_page == "Home":
     # Use columns for better structure
     col1, col2 = st.columns([3, 1])  # Larger column for search, smaller for filters
 
-     with col1:
+    with col1:
         st.markdown("### Search for a Weapon")
 
         # Text input for searching weapon names
