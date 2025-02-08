@@ -191,58 +191,49 @@ if st.session_state.current_page == "Home":
     image_names = data["Weapon_Name"].dropna().unique()
     IMAGE_FOLDER = "normalized_images"
 
-
      # Use columns for better structure
     col1, col2 = st.columns([3, 1])  # Larger column for search, smaller for filters
-
-    with col2:
-        st.markdown("### Filters")
-
-        # Weapon Type Filter
-        selected_type = st.selectbox(
-            "Filter by Type",
-            options=["All"] + sorted(weapon_types),
-            key="type_filter",
-        )
-
-        # Filter categories based on selected type
-        if selected_type != "All":
-            filtered_data = filtered_data[filtered_data["Type"] == selected_type]
-
-        filtered_categories = filtered_data["Weapon_Category"].dropna().unique()
-
-        # Weapon Category Filter
-        selected_category = st.selectbox(
-            "Filter by Category",
-            options=["All"] + sorted(filtered_categories),
-            key="category_filter",
-        )
-
-        # Apply category filter dynamically
-        if selected_category != "All":
-            filtered_data = filtered_data[filtered_data["Weapon_Category"] == selected_category]
 
     with col1:
         st.markdown("### Search for a Weapon")
 
-        # Filter available weapon names dynamically
-        filtered_weapon_names = filtered_data["Weapon_Name"].dropna().unique()
-
         # Dropdown with "All" as the default option
         selected_image = st.selectbox(
-            "Search Weapon Name",
-            options=["All"] + sorted(filtered_weapon_names),
-            key="image_filter",
+            "Search Weapon Name", options=["All"] + sorted(image_names), key="image_filter"
         )
 
-        # Apply Weapon Name filter to dynamically update Type and Category
-        if selected_image != "All":
-            filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
+        
+    with col2:
+        st.markdown("### Filters")
+        
+        # Weapon Type Filter
+        selected_type = st.selectbox(
+            "Filter by Type", options=["All"] + sorted(weapon_types), key="type_filter"
+        )
+
+        # Filter categories based on selected type
+        if selected_type != "All":
+            filtered_categories = data[data["Type"] == selected_type]["Weapon_Category"].dropna().unique()
+        else:
+            filtered_categories = weapon_categories
+
+        # Weapon Category Filter
+        selected_category = st.selectbox(
+            "Filter by Category", options=["All"] + sorted(filtered_categories), key="category_filter"
+        )
 
     st.markdown("---")  # Adds a separator line
 
-    # **Fetch and Display Weapon Image Based on Downloaded_Image_Name and Type**
+    # Apply filters to the data
+    filtered_data = data.copy()
+    if selected_type != "All":
+        filtered_data = filtered_data[filtered_data["Type"] == selected_type]
+    if selected_category != "All":
+        filtered_data = filtered_data[filtered_data["Weapon_Category"] == selected_category]
     if selected_image != "All":
+        filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
+
+        # **Fetch and Display Weapon Image Based on Downloaded_Image_Name and Category**
         weapon_info = filtered_data[filtered_data["Weapon_Name"] == selected_image]
         
         if not weapon_info.empty:
@@ -262,6 +253,9 @@ if st.session_state.current_page == "Home":
             st.warning("⚠️ No image data available for this weapon.")
 
 
+
+
+    
     # Display filtered data
     st.write("### Filtered Data Table")
     st.dataframe(filtered_data)
