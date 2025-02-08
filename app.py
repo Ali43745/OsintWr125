@@ -199,7 +199,7 @@ if st.session_state.current_page == "Home":
         # Corrected dropdown with "All" as the first choice
         selected_image = st.selectbox(
             "Search or Select a Weapon",
-            options=["All"] + image_names,  # Ensure "All" is a neutral option
+            options=image_names,  # Ensure "All" is a neutral option
             key="image_filter"
         )
 
