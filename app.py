@@ -8,6 +8,7 @@ from pathlib import Path
 import torch
 from sklearn.preprocessing import LabelEncoder
 import requests
+import os
 import zipfile
 import re
 import matplotlib.pyplot as plt
