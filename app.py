@@ -3,7 +3,8 @@ import pandas as pd
 import os
 import plotly.express as px
 from sqlalchemy import create_engine
-import pymysql  # ✅ Import pymysql
+import pymysql
+import MySQLdb  # ✅ Ensure MySQLdb is explicitly imported
 from fpdf import FPDF  
 from pathlib import Path 
 import torch
@@ -17,7 +18,7 @@ import numpy as np
 from io import BytesIO
 
 # ✅ Database connection details
-DB_HOST = "34.174.135.218"
+DB_HOST = "34.174.135.218"  # Change to use Cloud Proxy if needed
 DB_USER = "root"
 DB_PASSWORD = "osintwr12"
 DB_NAME = "StreamlitWeaponData"
@@ -29,18 +30,21 @@ def get_engine():
     try:
         pymysql.install_as_MySQLdb()
 
-        # Increase timeout and max retries
+        # Use Cloud SQL Proxy if applicable
+        DB_CONNECTION_NAME = "your-project-id:your-region:your-instance-id"  # ⚠️ Update this!
+
         engine = create_engine(
-            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?"
-            f"connect_timeout=180&read_timeout=180&write_timeout=180",
+            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}"
+            f"?unix_socket=/cloudsql/{DB_CONNECTION_NAME}&connect_timeout=180"
+            f"&read_timeout=180&write_timeout=180",
             pool_recycle=3600,
             pool_pre_ping=True
         )
 
-        st.success("Database connected successfully!")
+        st.success("✅ Database connected successfully!")
         return engine
     except Exception as e:
-        st.error(f"Database connection failed: {e}")
+        st.error(f"❌ Database connection failed: {e}")
         return None
 
 # ✅ Establish the connection
@@ -48,12 +52,11 @@ engine = get_engine()
 
 # ✅ Ensure connection is established before proceeding
 if engine is not None:
-    st.success("Database connected successfully!")
+    st.success("✅ Database connected successfully!")
 else:
-    st.error("Failed to connect to the database.")
+    st.error("❌ Failed to connect to the database.")
 
-# Load data from dbo_final_text1
-@st.cache_data
+# ✅ Load data from dbo_final_text1
 @st.cache_data
 def load_data():
     query = "SELECT Weapon_Name FROM dbo_final_text1 LIMIT 5;"  # Fetch fewer rows
@@ -61,10 +64,10 @@ def load_data():
         data = pd.read_sql(query, engine)
         return data
     except Exception as e:
-        st.error(f"Failed to fetch data: {e}")
+        st.error(f"❌ Failed to fetch data: {e}")
         return pd.DataFrame()
 
-# Fetch data
+# ✅ Fetch data
 data = load_data()
 
 
