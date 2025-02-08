@@ -239,7 +239,7 @@ if st.session_state.current_page == "Home":
         
         if not weapon_info.empty:
             image_filename = weapon_info["Downloaded_Image_Name"].values[0]  # Get image filename
-            weapon_category = weapon_info["Weapon_Category"].values[0]  # Get category folder
+            weapon_category = weapon_info["Type"].values[0]  # Get category folder
 
             # Construct the correct image path inside the respective category folder
             category_folder = os.path.join(IMAGE_FOLDER, weapon_category)  # Ensure correct folder structure
