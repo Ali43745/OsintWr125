@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
-import os
 import plotly.express as px
 from sqlalchemy import create_engine
-import pymysql
-import MySQLdb  # ✅ Ensure MySQLdb is explicitly imported
+import pymysql  # ✅ Required for MySQL connection
 from fpdf import FPDF  
 from pathlib import Path 
 import torch
@@ -17,29 +15,38 @@ import seaborn as sns
 import numpy as np
 from io import BytesIO
 
-# ✅ Database connection details
-DB_HOST = "34.174.135.218"  # Change to use Cloud Proxy if needed
+# ✅ Database Connection Details
+DB_HOST = "34.174.135.218"  # ⚠️ Keep this if connecting remotely
 DB_USER = "root"
 DB_PASSWORD = "osintwr12"
 DB_NAME = "StreamlitWeaponData"
 DB_PORT = "3306"
 
+# ✅ Uncomment if using Google Cloud SQL Proxy
+# DB_CONNECTION_NAME = "your-project-id:your-region:your-instance-id"  # ⚠️ UPDATE THIS
+
 # ✅ Define the database connection
 @st.cache_resource
 def get_engine():
     try:
-        pymysql.install_as_MySQLdb()
+        pymysql.install_as_MySQLdb()  # Ensure pymysql acts as MySQLdb
 
-        # Use Cloud SQL Proxy if applicable
-        DB_CONNECTION_NAME = "your-project-id:your-region:your-instance-id"  # ⚠️ Update this!
-
+        # ✅ Using Direct MySQL Connection
         engine = create_engine(
-            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}"
-            f"?unix_socket=/cloudsql/{DB_CONNECTION_NAME}&connect_timeout=180"
-            f"&read_timeout=180&write_timeout=180",
+            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?"
+            f"connect_timeout=300&read_timeout=300&write_timeout=300",
             pool_recycle=3600,
             pool_pre_ping=True
         )
+
+        # ✅ Uncomment if using Cloud SQL Proxy
+        # engine = create_engine(
+        #     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}"
+        #     f"?unix_socket=/cloudsql/{DB_CONNECTION_NAME}&connect_timeout=300"
+        #     f"&read_timeout=300&write_timeout=300",
+        #     pool_recycle=3600,
+        #     pool_pre_ping=True
+        # )
 
         st.success("✅ Database connected successfully!")
         return engine
@@ -51,12 +58,11 @@ def get_engine():
 engine = get_engine()
 
 # ✅ Ensure connection is established before proceeding
-if engine is not None:
-    st.success("✅ Database connected successfully!")
-else:
+if engine is None:
     st.error("❌ Failed to connect to the database.")
+    st.stop()
 
-# ✅ Load data from dbo_final_text1
+# ✅ Load Data from dbo_final_text1
 @st.cache_data
 def load_data():
     query = "SELECT Weapon_Name FROM dbo_final_text1 LIMIT 5;"  # Fetch fewer rows
@@ -67,8 +73,17 @@ def load_data():
         st.error(f"❌ Failed to fetch data: {e}")
         return pd.DataFrame()
 
-# ✅ Fetch data
+# ✅ Fetch Data
 data = load_data()
+
+# ✅ Display Data
+if not data.empty:
+    st.write("### 🔥 Sample Data from Database")
+    st.dataframe(data)
+else:
+    st.warning("⚠️ No data fetched. Check database connectivity.")
+
+
 
 
 # Resolve the directory path
