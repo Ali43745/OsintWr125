@@ -1,12 +1,10 @@
 streamlit
-MySQLdb
 pandas
 sqlalchemy
 pymysql
 plotly
 fpdf
 toml
-path
 transformers
 torch
 scikit-learn
