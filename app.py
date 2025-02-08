@@ -196,20 +196,12 @@ if st.session_state.current_page == "Home":
     with col1:
         st.markdown("### Search for a Weapon")
 
-        # Text input for searching weapon names
-        search_weapon_input = st.text_input(
-            "Search Weapon Name", placeholder="Search for a weapon..."
-        )
-
-        # Dropdown for selecting a weapon from the list
+        # Single input field with a dropdown effect
         selected_image = st.selectbox(
-            "Or Select from the List", options=["All"] + sorted(image_names), key="image_filter"
+            "Search or Select a Weapon",
+            options=[""] + image_names,  # Empty string as default for typing
+            key="image_filter"
         )
-
-        # If user types in the input box, override dropdown selection
-        if search_weapon_input:
-            selected_image = search_weapon_input
-
 
     with col2:
         st.markdown("### Filters")
