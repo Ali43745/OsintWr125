@@ -193,11 +193,23 @@ if st.session_state.current_page == "Home":
     # Use columns for better structure
     col1, col2 = st.columns([3, 1])  # Larger column for search, smaller for filters
 
-    with col1:
+     with col1:
         st.markdown("### Search for a Weapon")
-        selected_image = st.selectbox(
-            "Search Weapon Name", options=["All"] + sorted(image_names), key="image_filter"
+
+        # Text input for searching weapon names
+        search_weapon_input = st.text_input(
+            "Search Weapon Name", placeholder="Search for a weapon..."
         )
+
+        # Dropdown for selecting a weapon from the list
+        selected_image = st.selectbox(
+            "Or Select from the List", options=["All"] + sorted(image_names), key="image_filter"
+        )
+
+        # If user types in the input box, override dropdown selection
+        if search_weapon_input:
+            selected_image = search_weapon_input
+
 
     with col2:
         st.markdown("### Filters")
