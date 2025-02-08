@@ -196,12 +196,13 @@ if st.session_state.current_page == "Home":
     with col1:
         st.markdown("### Search for a Weapon")
 
-        # Single input field with a dropdown effect and "All" as default
+        # Corrected dropdown with "All" as the first choice
         selected_image = st.selectbox(
             "Search or Select a Weapon",
-            options=["All"] + image_names,  # "All" is now the default option
+            options=["All"] + image_names,  # Ensure "All" is a neutral option
             key="image_filter"
         )
+
         
     with col2:
         st.markdown("### Filters")
