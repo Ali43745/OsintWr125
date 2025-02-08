@@ -234,12 +234,22 @@ if st.session_state.current_page == "Home":
     if selected_image != "All":
         filtered_data = filtered_data[filtered_data["Weapon_Name"] == selected_image]
 
-        # **Display Weapon Image (if found)**
-        image_path = os.path.join(IMAGE_FOLDER, f"{selected_image}.jpg")  # Assuming images are stored as .jpg
-        if os.path.exists(image_path):
-            st.image(image_path, caption=f"Weapon: {selected_image}", use_column_width=True)
+        # **Fetch and Display Weapon Image Based on Downloaded_Image_Name**
+        image_info = filtered_data[filtered_data["Weapon_Name"] == selected_image]["Downloaded_Image_Name"]
+        
+        if not image_info.empty:
+            image_filename = image_info.values[0]  # Get the image filename
+
+            # Construct the image path
+            image_path = os.path.join(IMAGE_FOLDER, image_filename)
+
+            # Check if the image file exists and display it
+            if os.path.exists(image_path):
+                st.image(image_path, caption=f"Weapon: {selected_image}", use_column_width=True)
+            else:
+                st.warning("⚠️ No image found for this weapon.")
         else:
-            st.warning("⚠️ No image found for this weapon.")
+            st.warning("⚠️ No image data available for this weapon.")
 
     # Display filtered data
     st.write("### Filtered Data Table")
