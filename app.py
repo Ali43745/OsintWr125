@@ -68,8 +68,7 @@ def load_data():
     SELECT Weapon_Name, Source, Type, Weapon_Category, Origin, Development, 
            Caliber, Length, Barrel_Length, Weight, Width, Height, Action, 
            Complement, Speed, Downloaded_Image_Name 
-    FROM dbo_final_text1
-    LIMIT 11448;
+    FROM distinct_weapons;
     """
     try:
         data = pd.read_sql(query, engine)
