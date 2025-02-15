@@ -641,7 +641,7 @@ elif st.session_state.current_page == "AI_Prediction_Visualizations":
 # News Section
 elif st.session_state.current_page == "News_Section":
     st.write("### News Section")
-    st.write(f"Debug: Current Page - {st.session_state.current_page}")  # Confirm correct page in debug logs
+    
    
     # Prepare the data for the news
     news_data = data[[
@@ -654,7 +654,7 @@ elif st.session_state.current_page == "News_Section":
     IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), "normalized_images")
 
     # Debugging log: Check if news data is loaded correctly
-    st.write(f"Debug: Total News Items - {total_news_items}")
+
 
     # State to keep track of the current news index
     if "news_index" not in st.session_state:
@@ -665,7 +665,7 @@ elif st.session_state.current_page == "News_Section":
         new_index = (st.session_state.news_index + offset) % total_news_items
         st.session_state.news_index = new_index
         # Debugging log: Check the updated index
-        st.write(f"Debug: Updated News Index - {st.session_state.news_index}")
+
 
     # Function to generate PDF for a single news item
     def generate_single_news_pdf(news_item, image_path):
@@ -698,7 +698,7 @@ elif st.session_state.current_page == "News_Section":
     current_news = news_data.iloc[st.session_state.news_index]
 
     # Debugging log: Displaying current news item
-    st.write(f"Debug: Displaying News for - {current_news['Weapon_Name']}")
+
 
     # Get the image for the current news item
     image_path = None
@@ -735,12 +735,12 @@ elif st.session_state.current_page == "News_Section":
     with col1:
         if st.button("⬅️ Previous", key="prev_button"):
             update_news_index(-1)
-            st.write("Debug: Previous Button Clicked")  # Log button click
+
 
     with col3:
         if st.button("➡️ Next", key="next_button"):
             update_news_index(1)
-            st.write("Debug: Next Button Clicked")  # Log button click
+
 
     # Download news as PDF button
     pdf_path = generate_single_news_pdf(current_news, image_path)
