@@ -36,7 +36,7 @@ name = "Assault_Rifles"
 icon = "🚁"
 
 [[pages]]
-name = "Automic_Rifles"
+name = "Automatic_Rifles"
 icon = "🎯"
 
 [[pages]]
@@ -44,7 +44,7 @@ name = "Aviation_Subsystems"
 icon = "💣"
 
 [[pages]]
-name = "Battleships"
+name = "SmallArms_Firearms"
 icon = "🚀"
 
 [[pages]]
