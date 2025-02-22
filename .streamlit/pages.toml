@@ -2,6 +2,25 @@
 name = "Home"
 icon = "✈️"
 
+[[pages]]
+name = "4_Wheeled_Vehicles"
+icon = "🚗"
+
+[[pages]]
+name = "6_Wheeled_Vehicles"
+icon = "🚙"
+
+[[pages]]
+name = "8_Wheeled_Vehicles"
+icon = "🚛"
+
+[[pages]]
+name = "Anti_Material_Rifles"
+icon = "🔫"
+
+[[pages]]
+name = "Armored_Car"
+icon = "🚙"
 
 [[pages]]
 name = "Aircraft"
@@ -44,8 +63,25 @@ name = "Aviation_Subsystems"
 icon = "💣"
 
 [[pages]]
-name = "Smallarms_Rifles"
-icon = "🚀"
+name = "Battleships"
+icon = "🚢"
+
+[[pages]]
+name = "Biplanes"
+icon = "🛩️"
+
+[[pages]]
+name = "Close_Air_Support_Military_Aircraft"
+icon = "✈️"
+
+[[pages]]
+name = "Corvettes"
+icon = "🚤"
+
+[[pages]]
+name = "Cruisers"
+icon = "🚢"
+
 
 [[pages]]
 name = "Bolt_Action_Rifles"
@@ -96,6 +132,14 @@ name = "Hand_Grenades"
 icon = "🚜"
 
 [[pages]]
+name = "Hunting_Rifles"
+icon = "🔫"
+
+[[pages]]
+name = "Ironclads"
+icon = "⚓"
+
+[[pages]]
 name = "Infantory_Fighting_Vehicles"
 icon = "🚀"
 
@@ -120,6 +164,40 @@ name = "Multiple_Launched_Rocket_System"
 icon = "🔫"
 
 [[pages]]
+name = "Military_Trucks"
+icon = "🚛"
+
+[[pages]]
+name = "MRAP_Military_Vehicles"
+icon = "🚚"
+
+[[pages]]
+name = "Multirole_Aircraft"
+icon = "✈️"
+
+[[pages]]
+name = "Machine_Guns"
+icon = "🔫"
+
+[[pages]]
+name = "Machine_Pistols"
+icon = "🔫"
+
+[[pages]]
+name = "Medium_Tanks"
+icon = "🚓"
+
+
+[[pages]]
+name = "Nuclear_Attack_Submarines"
+icon = "🔱"
+
+
+[[pages]]
+name = "Patrol"
+icon = "🚤"
+
+[[pages]]
 name = "Patrol_Craft"
 icon = "🔫"
 
@@ -130,6 +208,36 @@ icon = "🔫"
 [[pages]]
 name = "Revolver"
 icon = "🔫"
+
+[[pages]]
+name = "Reconnaissance_Scout_Aircraft"
+icon = "✈️"
+
+[[pages]]
+name = "Railway_Guns"
+icon = "🚂"
+
+
+[[pages]]
+name = "Search_And_Rescue_Aircraft"
+icon = "🚁"
+
+[[pages]]
+name = "Silenced_Guns"
+icon = "🔫"
+
+[[pages]]
+name = "Sniper_Rifles"
+icon = "🔫"
+
+[[pages]]
+name = "Special_Forces_Aircraft"
+icon = "✈️"
+
+[[pages]]
+name = "Special_Weapon_Systems"
+icon = "💣"
+
 
 [[pages]]
 name = "Self_Loading_Rifles"
@@ -154,6 +262,15 @@ icon = "🎯"
 [[pages]]
 name = "Submarines"
 icon = "🔫"
+
+[[pages]]
+name = "Smallarms_Rifles"
+icon = "🚀"
+
+[[pages]]
+name = "Tank_Destroyers"
+icon = "🚓"
+
 
 [[pages]]
 name = "Vehicle_Subsystems"
