@@ -447,6 +447,7 @@ if st.session_state.current_page == "Home":
                             data=file,
                             file_name=os.path.basename(first_image),
                             mime="image/png"
+                            key=f"download_{cleaned_category_name}_{os.path.basename(first_image)}"
                         )
 
                 # Add expander for details
