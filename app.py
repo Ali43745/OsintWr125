@@ -446,7 +446,7 @@ if st.session_state.current_page == "Home":
                             label="Download as PNG",
                             data=file,
                             file_name=os.path.basename(first_image),
-                            mime="image/png"
+                            mime="image/png",
                             key=f"download_{cleaned_category_name}_{os.path.basename(first_image)}"
                         )
 
