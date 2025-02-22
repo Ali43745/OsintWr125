@@ -65,7 +65,7 @@ if engine is None:
 @st.cache_data
 def load_data():
     query = """
-    SELECT Weapon_Name, Source, Type, Weapon_Category, Origin, Development, 
+    SELECT Weapon_Name, Type, Weapon_Category, Source, Origin, Development, 
            Caliber, Length, Barrel_Length, Weight, Width, Height, Action, 
            Complement, Speed, Downloaded_Image_Name 
     FROM distinct_weapons;
