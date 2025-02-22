@@ -84,6 +84,11 @@ def load_data():
             # Check if "cm" is present in the name
             if re.search(r'\d+\s*cm', name, re.IGNORECASE):
                 return name  # Keep the name unchanged if "cm" is found
+
+            # Check if "&" is present after the number
+            if re.match(r'^\d+\s*&', name):
+                return name  # Keep the name unchanged if "&" follows the number
+
             
             # Remove leading numbers and spaces
             new_name = re.sub(r'^\d+\s+', '', name).strip()
