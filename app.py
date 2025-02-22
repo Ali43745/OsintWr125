@@ -812,7 +812,7 @@ else:
             query = f"""
             SELECT Weapon_Name AS 'Weapon Name', Development AS 'Development Era', Origin,
                Weapon_Category AS 'Weapon Category', Type, Caliber
-            FROM dbo_final_text1
+            FROM distinct_weapons
             WHERE Downloaded_Image_Name = '{file_name_escaped}'
             """
             result = pd.read_sql(query, engine)
