@@ -284,6 +284,10 @@ icon = "🔫"
 name = "News_Section"
 icon = "🔫"
 
+[[pages]]
+name = "X_Tanks_Prototype_Vehicles"
+icon = "🔫"
+
 
 [[pages]]
 name = "AI Prediction Visualizations"
